@@ -3,7 +3,8 @@
 
 #include "../../include/models/user.h"
 
-void save_user(User user);
+User save_user(User user);
 int get_next_user_id();
+User* load_users(int* total);
 
 #endif
