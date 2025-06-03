@@ -11,6 +11,8 @@ add_executable(doc_embarque ${SOURCES}
         include/services/school_service.h
         include/models/school.h
         src/services/school_service.c
+        include/use_cases/create_school.h
+        src/use_cases/create_school.c
 )
 
 set_target_properties(doc_embarque PROPERTIES

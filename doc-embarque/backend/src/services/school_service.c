@@ -11,7 +11,7 @@ int get_next_school_id() {
     School s;
 
     if (file != NULL) {
-        while (fscanf(file, "%d;%d;%[^;];%s\n", &temp, s.user_id, s.name, s.address) == 4) {
+        while (fscanf(file, "%d;%d;%[^;];%s\n", &temp, &s.user_id, s.name, s.address) == 4) {
             if (temp > id) {
                 id = temp;
             }
