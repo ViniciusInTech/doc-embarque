@@ -37,16 +37,18 @@ void create_data_directory() {
 #endif
 }
 
-void save_user(User user) {
+User save_user(User user) {
     create_data_directory();
 
     FILE *file = fopen(FILE_PATH, "a");
 
     if (file == NULL) {
         perror("Erro ao abrir o arquivo");
-        return;
+        user.id = -1;
+        return user;
     }
 
     fprintf(file, "%d;%s;%s;%s;%s\n", user.id, user.name, user.email, user.password, user.role);
     fclose(file);
+    return user;
 }
