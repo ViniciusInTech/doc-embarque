@@ -8,9 +8,7 @@ include_directories(include include/models include/services)
 file(GLOB_RECURSE SOURCES "src/*.c" "main.c")
 
 add_executable(doc_embarque ${SOURCES}
-        include/services/school_service.h
         include/models/school.h
-        src/services/school_service.c
         include/use_cases/create_school.h
         src/use_cases/create_school.c
 )

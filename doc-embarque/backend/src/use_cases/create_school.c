@@ -1,19 +1,63 @@
 #include <stdio.h>
 #include <string.h>
 #include "../../include/models/school.h"
-#include "../../include/services/school_service.h"
 #include "../../include/use_cases/create_school.h"
+#define FILE_PATH "../../data/schools.txt"
+#define FILE_PATH_USER "../../data/users.txt"
+#include "../../include/models/user.h"
+
+int get_next_school_id() {
+    FILE *file = fopen(FILE_PATH, "r");
+    int id = 0, temp;
+    School s;
+
+    if (file != NULL) {
+        while (fscanf(file, "%d;%d;%[^;];%s\n", &temp, &s.user_id, s.name, s.address) == 4) {
+            if (temp > id) {
+                id = temp;
+            }
+        }
+        fclose(file);
+    }
+
+    return id + 1;
+}
+
+School save_school(School school) {
+    FILE *file = fopen(FILE_PATH, "a");
+
+    if (file == NULL) {
+        perror("Erro ao abrir o arquivo");
+        return school;
+    }
+
+    fprintf(file, "%d;%d;%s;%s\n", school.id, school.user_id, school.name, school.address);
+    fclose(file);
+    return school;
+}
+
+int verify_user(int id) {
+    FILE *file = fopen(FILE_PATH_USER, "r");
+    User u;
+    int temp;
+    int found = 0;
+
+    if (file != NULL) {
+        while (fscanf(file, "%d;%[^;];%[^;];%[^;];%s\n", &temp, u.name, u.email, u.password, u.role) == 5) {
+            if (temp == id) {
+                found = 1;
+                break;
+            }
+        }
+        fclose(file);
+    }
+
+    return found;
+}
 
 School create_school(School school) {
     school.id = get_next_school_id();
-    School new_school = school;
-    if (new_school.id == -1) {
-        printf("Erro. A escola não foi cadastrada.\n");
-        return new_school;
-    }
-
-    save_school(new_school);
-    return new_school;
+    return save_school(school);
 }
 
 School create_school_cli() {
