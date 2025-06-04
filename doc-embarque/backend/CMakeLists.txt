@@ -7,7 +7,6 @@ include_directories(include include/models include/services include/use_cases)
 
 add_executable(doc_embarque
         main.c
-        src/services/user_service.c
         src/use_cases/create_user.c
 )
 
