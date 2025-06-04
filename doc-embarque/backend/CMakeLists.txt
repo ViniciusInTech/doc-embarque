@@ -8,6 +8,7 @@ include_directories(include include/models include/services include/use_cases)
 add_executable(doc_embarque
         main.c
         src/use_cases/create_user.c
+        src/use_cases/login.c
 )
 
 set_target_properties(doc_embarque PROPERTIES
