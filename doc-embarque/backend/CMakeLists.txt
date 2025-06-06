@@ -3,13 +3,12 @@ cmake_minimum_required(VERSION 3.10)
 project(doc_embarque C)
 set(CMAKE_C_STANDARD 99)
 
-include_directories(include include/models include/services)
+include_directories(include include/models include/services include/use_cases)
 
-file(GLOB_RECURSE SOURCES "src/*.c" "main.c")
-
-add_executable(doc_embarque ${SOURCES}
-        include/models/school.h
-        include/use_cases/create_school.h
+add_executable(doc_embarque
+        main.c
+        src/use_cases/create_user.c
+        src/use_cases/login.c
         src/use_cases/create_school.c
 )
 

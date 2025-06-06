@@ -11,10 +11,10 @@ backend/
 ├── data/                 # Arquivos .txt simulando persistência dos dados
 ├── include/              # Arquivos de cabeçalho (.h)
 │   ├── models/           # Structs que representam as entidades do sistema
-│   └── services/         # Declarações das funções de manipulação e lógica
+│   └── use_cases/        # Declarações das funções de manipulação e lógica
 ├── src/                  # Implementações em C (.c)
 │   ├── models/           # Definição das entidades
-│   └── services/         # Implementação das funções de negócio (CRUD, busca, etc.)
+│   └── use_cases/        # Implementação das funções de negócio (CRUD, busca, etc.)
 ├── main.c                # Arquivo principal para testes e execução
 ├── Makefile              # Script de compilação do projeto
 └── README.md             # Documentação do backend
@@ -36,6 +36,12 @@ backend/
 - Gerenciar as entidades e regras de negócio da excursão.
 - Manipular dados em arquivos `.txt`, simulando um banco de dados.
 - Fornecer funções reutilizáveis para o frontend (interface gráfica).
+
+## ✨ Casos de Uso
+
+- `create_user_cli`: cadastra um novo usuário via linha de comando.
+- `login_cli`: valida o acesso do usuário a partir do email e senha armazenados.
+
 
 ## 🚧 Em Desenvolvimento
 
