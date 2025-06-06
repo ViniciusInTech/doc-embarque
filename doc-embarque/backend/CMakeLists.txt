@@ -11,6 +11,8 @@ add_executable(doc_embarque
         src/use_cases/login.c
         src/use_cases/create_school.c
         src/use_cases/update_user.c
+        include/use_cases/update_school.h
+        src/use_cases/update_school.c
 )
 
 set_target_properties(doc_embarque PROPERTIES
