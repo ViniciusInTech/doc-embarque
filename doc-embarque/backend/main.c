@@ -1,12 +1,22 @@
 #include <stdio.h>
-
 #include "user.h"
+#include "include/models/school.h"
 #include "include/use_cases/create_user.h"
 #include "include/use_cases/login.h"
+#include "include/use_cases/create_school.h"
 
 int main() {
     User user = create_user_cli();
     printf("Usuário '%s' cadastrado com ID %d.\n", user.name, user.id);
+  
+    School escola;
+
+    if (verify_user(1)) {
+        escola = create_school_cli();
+        printf("Escola '%s' cadastrada com ID %d.\n", escola.name, escola.id);
+    }
+    else {
+        printf("Usuário não encontrado.\n");
 
     User logged;
     if (login_cli(&logged)) {

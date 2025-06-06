@@ -9,6 +9,7 @@ add_executable(doc_embarque
         main.c
         src/use_cases/create_user.c
         src/use_cases/login.c
+        src/use_cases/create_school.c
 )
 
 set_target_properties(doc_embarque PROPERTIES

@@ -1,0 +1,77 @@
+#include <stdio.h>
+#include <string.h>
+#include "../../include/models/school.h"
+#include "../../include/use_cases/create_school.h"
+#define FILE_PATH "../../data/schools.txt"
+#define FILE_PATH_USER "../../data/users.txt"
+#include "../../include/models/user.h"
+
+int get_next_school_id() {
+    FILE *file = fopen(FILE_PATH, "r");
+    int id = 0, temp;
+    School s;
+
+    if (file != NULL) {
+        while (fscanf(file, "%d;%d;%[^;];%s\n", &temp, &s.user_id, s.name, s.address) == 4) {
+            if (temp > id) {
+                id = temp;
+            }
+        }
+        fclose(file);
+    }
+
+    return id + 1;
+}
+
+School save_school(School school) {
+    FILE *file = fopen(FILE_PATH, "a");
+
+    if (file == NULL) {
+        perror("Erro ao abrir o arquivo");
+        return school;
+    }
+
+    fprintf(file, "%d;%d;%s;%s\n", school.id, school.user_id, school.name, school.address);
+    fclose(file);
+    return school;
+}
+
+int verify_user(int id) {
+    FILE *file = fopen(FILE_PATH_USER, "r");
+    User u;
+    int temp;
+    int found = 0;
+
+    if (file != NULL) {
+        while (fscanf(file, "%d;%[^;];%[^;];%[^;];%s\n", &temp, u.name, u.email, u.password, u.role) == 5) {
+            if (temp == id) {
+                found = 1;
+                break;
+            }
+        }
+        fclose(file);
+    }
+
+    return found;
+}
+
+School create_school(School school) {
+    school.id = get_next_school_id();
+    return save_school(school);
+}
+
+School create_school_cli() {
+    School escola;
+
+    printf("Nome da escola: ");
+    fgets(escola.name, sizeof(escola.name), stdin);
+    strtok(escola.name, "\n");
+
+    printf("Endereço da escola: ");
+    fgets(escola.address, sizeof(escola.address), stdin);
+    strtok(escola.address, "\n");
+
+    escola.user_id = 1;
+
+    return create_school(escola);
+}
