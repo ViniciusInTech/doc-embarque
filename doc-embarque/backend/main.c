@@ -5,10 +5,12 @@
 #include "include/use_cases/login.h"
 #include "include/use_cases/update_user.h"
 #include "include/use_cases/create_school.h"
+#include "include/use_cases/delete_user.h"
 
 int main() {
     User user = create_user_cli();
     printf("Usuário '%s' cadastrado com ID %d.\n", user.name, user.id);
+    delete_user_cli();
 
     update_user_cli();
   

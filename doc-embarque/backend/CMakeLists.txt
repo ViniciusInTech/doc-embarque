@@ -12,6 +12,7 @@ add_executable(doc_embarque
         src/use_cases/create_school.c
         src/use_cases/update_user.c
         src/use_cases/get_user.c
+        src/use_cases/delete_user.c
 )
 
 set_target_properties(doc_embarque PROPERTIES
