@@ -8,4 +8,6 @@ typedef struct {
     char address[100];
 } School;
 
+
+
 #endif //SCHOOL_H
