@@ -14,6 +14,4 @@ typedef struct {
 
 } Class;
 
-
-
 #endif //CLASS_H
