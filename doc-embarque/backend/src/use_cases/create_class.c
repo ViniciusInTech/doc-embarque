@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 #include <stdio.h>
 #include <string.h>
 #include "../../include/models/class.h"
@@ -69,8 +69,7 @@ Class create_class_cli() {
 
     return c;
 }
-=======
+
 //
 // Created by gpslg on 08/06/2025.
 //
->>>>>>> origin/main
