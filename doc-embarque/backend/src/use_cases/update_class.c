@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 #include <stdio.h>
 #include "../../include/models/class.h"
 #define DATA_CLASS "../../data/class.txt"
@@ -40,8 +40,7 @@ void update_Class(Class updated) {
     else
         printf("Classe com ID %d não encontrada.\n", updated.class_id);
 }
-=======
-//
+
 // Created by gpslg on 08/06/2025.
 //
->>>>>>> origin/main
+
