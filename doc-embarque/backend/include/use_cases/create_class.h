@@ -4,5 +4,14 @@
 
 #ifndef CREATE_CLASS_H
 #define CREATE_CLASS_H
+<<<<<<< HEAD
+#include "../models/class.h"
+
+int class_exists(int id);
+void save_class(Class c);
+Class create_class_cli();
+
+=======
+>>>>>>> origin/main
 
 #endif //CREATE_CLASS_H
