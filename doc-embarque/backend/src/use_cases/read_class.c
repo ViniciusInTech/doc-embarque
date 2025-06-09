@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 #include <stdio.h>
 #include "../../include/models/class.h"
 
@@ -20,8 +20,9 @@ void read_classes() {
 
     fclose(file);
 }
-=======
+
+
 //
 // Created by gpslg on 08/06/2025.
 //
->>>>>>> origin/main
+
