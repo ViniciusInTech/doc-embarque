@@ -1,19 +1,41 @@
-
 #include <stdio.h>
 #include <string.h>
+
 #include "../../include/models/class.h"
+#include "../../include/models/school.h"
+#include "../../include/use_cases/create_class.h"
 
+#define FILE_PATH "../../data/class.txt"
+#define SCHOOL_FILE "../../data/schools.txt"
 
-#define DATA_CLASS "../../data/class.txt"
+int get_next_class_id() {
+    FILE *file = fopen(FILE_PATH, "r");
+    int id = 0, temp;
+    Class c;
+
+    if (file != NULL) {
+        while (fscanf(file, "%d;%d;%[^;];%d;%d\n", &temp, &c.school_id, c.name,
+                      &c.students, &c.confirmed_students) == 5) {
+            if (temp > id) {
+                id = temp;
+            }
+        }
+        fclose(file);
+    }
+
+    return id + 1;
+}
 
 int class_exists(int id) {
-    FILE *file = fopen(DATA_CLASS, "r");
+    FILE *file = fopen(FILE_PATH, "r");
     Class c;
+    int temp;
     int found = 0;
 
     if (file != NULL) {
-        while (fscanf(file, "%d;%d;%[^;];%d;%d\n", &c.class_id, &c.school_id, c.name, &c.students, &c.confirmed_students) == 5) {
-            if (c.class_id == id) {
+        while (fscanf(file, "%d;%d;%[^;];%d;%d\n", &temp, &c.school_id, c.name,
+                      &c.students, &c.confirmed_students) == 5) {
+            if (temp == id) {
                 found = 1;
                 break;
             }
@@ -24,33 +46,53 @@ int class_exists(int id) {
     return found;
 }
 
-void save_class(Class c) {
-    FILE *file = fopen(DATA_CLASS, "a");
+int verify_school(int id) {
+    FILE *file = fopen(SCHOOL_FILE, "r");
+    School s;
+    int temp;
+    int found = 0;
 
-    if (file == NULL) {
-        printf("Erro ao abrir o arquivo.\n");
-        return;
+    if (file != NULL) {
+        while (fscanf(file, "%d;%d;%[^;];%[^\n]\n", &temp, &s.user_id, s.name, s.address) == 4) {
+            if (temp == id) {
+                found = 1;
+                break;
+            }
+        }
+        fclose(file);
     }
 
-    fprintf(file, "%d;%d;%s;%d;%d\n", c.class_id, c.school_id, c.name, c.students, c.confirmed_students);
+    return found;
+}
+
+Class save_class(Class c) {
+    FILE *file = fopen(FILE_PATH, "a");
+    c.class_id = get_next_class_id();
+
+    if (file == NULL) {
+        perror("Erro ao abrir o arquivo");
+        c.class_id = -1;
+        return c;
+    }
+
+    fprintf(file, "%d;%d;%s;%d;%d\n", c.class_id, c.school_id, c.name,
+            c.students, c.confirmed_students);
     fclose(file);
+    return c;
 }
 
 Class create_class_cli() {
     Class c;
 
-    printf("ID da turma: ");
-    scanf("%d", &c.class_id);
-    getchar();
-
-    if (class_exists(c.class_id)) {
-        printf("Turma já existe!\n");
-        return c;
-    }
-
     printf("ID da escola: ");
     scanf("%d", &c.school_id);
     getchar();
+
+    if (!verify_school(c.school_id)) {
+        printf("Escola com ID %d não encontrada.\n", c.school_id);
+        c.class_id = -1;
+        return c;
+    }
 
     printf("Nome da turma: ");
     fgets(c.name, sizeof(c.name), stdin);
@@ -64,12 +106,9 @@ Class create_class_cli() {
     scanf("%d", &c.confirmed_students);
     getchar();
 
-    save_class(c);
-    printf("Turma criada com sucesso!\n");
-
+    c = save_class(c);
+    if (c.class_id != -1) {
+        printf("turma salva com sucesso.\n");
+    }
     return c;
 }
-
-//
-// Created by gpslg on 08/06/2025.
-//

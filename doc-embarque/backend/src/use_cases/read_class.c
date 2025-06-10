@@ -1,6 +1,7 @@
-
 #include <stdio.h>
+
 #include "../../include/models/class.h"
+#include "../../include/use_cases/read_class.h"
 
 #define DATA_CLASS "../../data/class.txt"
 
@@ -13,16 +14,11 @@ void read_classes() {
         return;
     }
 
-    while (fscanf(file, "%d;%d;%[^;];%d;%d\n", &c.class_id, &c.school_id, c.name, &c.students, &c.confirmed_students) == 5) {
+    while (fscanf(file, "%d;%d;%[^;];%d;%d\n", &c.class_id, &c.school_id, c.name,
+                   &c.students, &c.confirmed_students) == 5) {
         printf("ID da classe: %d | Escola: %d | Nome da classe: %s | Total de alunos: %d | Total de alunos confirmados: %d\n",
                c.class_id, c.school_id, c.name, c.students, c.confirmed_students);
-    }
+                   }
 
     fclose(file);
 }
-
-
-//
-// Created by gpslg on 08/06/2025.
-//
-

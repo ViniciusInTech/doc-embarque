@@ -1,46 +1,62 @@
-
 #include <stdio.h>
+
 #include "../../include/models/class.h"
+#include "../../include/use_cases/update_class.h"
+#include <stdlib.h>
+
 #define DATA_CLASS "../../data/class.txt"
-#define TEMP_FILE "../../data/temp.txt"
 
-
-void update_Class(Class updated) {
+void update_class(Class updated) {
     FILE *file = fopen(DATA_CLASS, "r");
-    FILE *temp = fopen(TEMP_FILE, "w");
-
-    if (file == NULL || temp == NULL) {
-        printf("Erro ao abrir os arquivos.\n");
+    if (file == NULL) {
+        printf("Erro ao abrir o arquivo.\n");
         return;
     }
 
+    Class *classes = NULL;
+    size_t count = 0;
     Class c;
     int found = 0;
 
-    while (fscanf(file, "%d;%d;%[^;];%d;%d\n", &c.class_id, &c.school_id, c.name, &c.students, &c.confirmed_students) == 5) {
+    while (fscanf(file, "%d;%d;%[^;];%d;%d\n", &c.class_id, &c.school_id, c.name,
+                   &c.students, &c.confirmed_students) == 5) {
+        Class to_store = c;
         if (c.class_id == updated.class_id) {
-
-            fprintf(temp, "%d;%d;%s;%d;%d\n", updated.class_id, updated.school_id, updated.name, updated.students, updated.confirmed_students);
+            to_store = updated;
             found = 1;
-        } else {
-
-            fprintf(temp, "%d;%d;%s;%d;%d\n", c.class_id, c.school_id, c.name, c.students, c.confirmed_students);
         }
+
+        Class *tmp = realloc(classes, (count + 1) * sizeof(Class));
+        if (!tmp) {
+            perror("Erro de memória");
+            free(classes);
+            fclose(file);
+            return;
+        }
+        classes = tmp;
+        classes[count++] = to_store;
+                   }
+    fclose(file);
+
+    if (!found) {
+        free(classes);
+        printf("Classe com ID %d não encontrada.\n", updated.class_id);
+        return;
     }
 
+    file = fopen(DATA_CLASS, "w");
+    if (file == NULL) {
+        perror("Erro ao escrever no arquivo");
+        free(classes);
+        return;
+    }
+
+    for (size_t i = 0; i < count; ++i) {
+        fprintf(file, "%d;%d;%s;%d;%d\n", classes[i].class_id, classes[i].school_id,
+                classes[i].name, classes[i].students, classes[i].confirmed_students);
+    }
     fclose(file);
-    fclose(temp);
+    free(classes);
 
-
-    remove(DATA_CLASS);
-    rename(TEMP_FILE, DATA_CLASS);
-
-    if (found)
-        printf("Classe atualizada com sucesso.\n");
-    else
-        printf("Classe com ID %d não encontrada.\n", updated.class_id);
+    printf("Classe atualizada com sucesso.\n");
 }
-
-// Created by gpslg on 08/06/2025.
-//
-

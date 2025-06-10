@@ -8,6 +8,8 @@
 #include "include/use_cases/delete_user.h"
 #include "include/models/class.h"
 #include "include/use_cases/create_class.h"
+#include "include/use_cases/delete_class.h"
+#include "include/use_cases/read_class.h"
 
 
 
@@ -22,14 +24,18 @@ int main() {
   
     School escola;
     Class c;
+    read_classes();
+
 
     if (verify_user(1)) {
         escola = create_school_cli();
         printf("Escola '%s' cadastrada com ID %d.\n", escola.name, escola.id);
 
         c = create_class_cli();
-        printf("Turma '%s' criada com ID %d para a escola %d.\n",
+        if (c.class_id != -1) {
+            printf("Turma '%s' criada com ID %d para a escola %d.\n",
                c.name, c.class_id, c.school_id);
+        }
     }
     else {
         printf("Usuário não encontrado.\n");
