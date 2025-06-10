@@ -1,7 +1,3 @@
-//
-// Created by gpslg on 08/06/2025.
-//
-
 #ifndef CLASS_H
 #define CLASS_H
 
@@ -14,4 +10,4 @@ typedef struct {
 
 } Class;
 
-#endif //CLASS_H
+#endif
