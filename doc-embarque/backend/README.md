@@ -37,12 +37,26 @@ backend/
 - Manipular dados em arquivos `.txt`, simulando um banco de dados.
 - Fornecer funções reutilizáveis para o frontend (interface gráfica).
 
-## ✨ Casos de Uso
 
-- `create_user_cli`: cadastra um novo usuário via linha de comando.
-- `login_cli`: valida o acesso do usuário a partir do email e senha armazenados.
+## 🗄️ Backend
 
+O repositório inclui um backend escrito em **C** localizado em `doc-embarque/backend`.
+Ele simula a persistência de dados em arquivos `.txt` e disponibiliza diversos casos de uso para a manipulação de usuários e escolas. Alguns exemplos:
 
+- `create_user_cli` e `login_cli` para cadastro e autenticação de usuários;
+- `update_user_cli` e `delete_user_cli` para edição e remoção;
+- `get_user_by_id` para consultas pontuais;
+- `create_school_cli` para registrar escolas vinculadas a um usuário.
+
+### Compilação
+
+```bash
+cd doc-embarque/backend
+mkdir build && cd build
+cmake .. && make
+```
+
+Após o processo o executável ficará disponível em `build/bin/doc_embarque`.
 ## 🚧 Em Desenvolvimento
 
 Este backend será integrado à interface gráfica desenvolvida separadamente na pasta `frontend/`.

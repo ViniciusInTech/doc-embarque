@@ -2,7 +2,9 @@
 #include  <string.h>
 #include "../../include/models/student.h"
 #include "../../include/use_cases/create_student.h"
+#include "../../include/models/class.h"
 #define FILE_PATH "../../data/students.txt"
+#define FILE_PATH_CLASS "../../data/class.txt"
 
 int get_next_student_id() {
     FILE *file = fopen(FILE_PATH, "r");
@@ -35,7 +37,24 @@ Student save_student(Student student) {
     return student;
 }
 
-// verify_classroom precisa dos arquivos referentes as turmas
+int verify_classroom(int id) {
+    FILE *file = fopen(FILE_PATH_CLASS, "r");
+    Class c;
+    int temp;
+    int found = 0;
+
+    if (file != NULL) {
+        while (fscanf(file, "%d;%d;%[^;];%d;%d;", &temp, &c.school_id, c.name, &c.students, &c.confirmed_students) == 5) {
+            if (temp == id) {
+                found = 1;
+                break;
+            }
+        }
+        fclose(file);
+    }
+
+    return found;
+}
 
 Student create_student(Student student) {
     student.id = get_next_student_id();
