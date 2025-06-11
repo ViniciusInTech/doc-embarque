@@ -47,6 +47,8 @@ Ele simula a persistência de dados em arquivos `.txt` e disponibiliza diversos 
 - `update_user_cli` e `delete_user_cli` para edição e remoção;
 - `get_user_by_id` para consultas pontuais;
 - `create_school_cli` para registrar escolas vinculadas a um usuário.
+- `create_class_cli` para cadastro de turmas.
+- `create_student_cli` para inserir alunos em uma turma.
 
 ### Compilação
 

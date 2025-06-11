@@ -10,17 +10,11 @@
 
 #include "../../include/models/user.h"
 #include "../../include/use_cases/create_user.h"
+#include "../../include/utils.h"
 
 #define DATA_DIR "../../data"
 #define FILE_PATH "../../data/users.txt"
 
-static void create_data_directory() {
-#ifdef _WIN32
-    _mkdir(DATA_DIR);
-#else
-    mkdir(DATA_DIR, 0777);
-#endif
-}
 
 static int get_next_user_id() {
     FILE *file = fopen(FILE_PATH, "r");
@@ -38,7 +32,7 @@ static int get_next_user_id() {
 }
 
 static User save_user(User user) {
-    create_data_directory();
+    ensure_data_directory();
 
     FILE *file = fopen(FILE_PATH, "a");
     if (file == NULL) {

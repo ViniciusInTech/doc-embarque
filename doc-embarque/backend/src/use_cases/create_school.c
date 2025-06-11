@@ -2,6 +2,7 @@
 #include <string.h>
 #include "../../include/models/school.h"
 #include "../../include/use_cases/create_school.h"
+#include "../../include/utils.h"
 #define FILE_PATH "../../data/schools.txt"
 #define FILE_PATH_USER "../../data/users.txt"
 #include "../../include/models/user.h"
@@ -24,6 +25,7 @@ int get_next_school_id() {
 }
 
 School save_school(School school) {
+    ensure_data_directory();
     FILE *file = fopen(FILE_PATH, "a");
 
     if (file == NULL) {

@@ -10,10 +10,12 @@ add_executable(doc_embarque
         src/use_cases/create_user.c
         src/use_cases/login.c
         src/use_cases/create_school.c
+        src/utils.c
         src/use_cases/update_user.c
         src/use_cases/get_user.c
         src/use_cases/delete_user.c
         src/use_cases/create_class.c
+        src/use_cases/create_student.c
         src/use_cases/delete_class.c
         src/use_cases/update_class.c
         src/use_cases/read_class.c

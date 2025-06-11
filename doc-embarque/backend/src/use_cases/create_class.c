@@ -4,6 +4,7 @@
 #include "../../include/models/class.h"
 #include "../../include/models/school.h"
 #include "../../include/use_cases/create_class.h"
+#include "../../include/utils.h"
 
 #define FILE_PATH "../../data/class.txt"
 #define SCHOOL_FILE "../../data/schools.txt"
@@ -66,6 +67,7 @@ int verify_school(int id) {
 }
 
 Class save_class(Class c) {
+    ensure_data_directory();
     FILE *file = fopen(FILE_PATH, "a");
     c.class_id = get_next_class_id();
 
