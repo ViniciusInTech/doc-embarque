@@ -10,10 +10,8 @@
 #include "include/use_cases/create_class.h"
 #include "include/use_cases/delete_class.h"
 #include "include/use_cases/read_class.h"
-
-
-
-
+#include "include/models/student.h"
+#include "include/use_cases/create_student.h"
 
 int main() {
     User user = create_user_cli();
@@ -35,6 +33,10 @@ int main() {
         if (c.class_id != -1) {
             printf("Turma '%s' criada com ID %d para a escola %d.\n",
                c.name, c.class_id, c.school_id);
+            Student aluno = create_student_cli();
+            if (aluno.id != -1) {
+                printf("Aluno '%s' cadastrado com ID %d.\n", aluno.name, aluno.id);
+            }
         }
     }
     else {
