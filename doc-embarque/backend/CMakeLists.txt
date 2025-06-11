@@ -19,6 +19,8 @@ add_executable(doc_embarque
         src/use_cases/delete_class.c
         src/use_cases/update_class.c
         src/use_cases/read_class.c
+        include/use_cases/get_student.h
+        src/use_cases/get_student.c
 )
 
 set_target_properties(doc_embarque PROPERTIES
