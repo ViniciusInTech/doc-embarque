@@ -2,13 +2,13 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../../include/models/school.h"
-#include "../../include/use_cases/delete_school.h"
+#include "../../include/models/student.h"
+#include "../../include/use_cases/delete_student.h"
 
-#define FILE_PATH "../../data/schools.txt"
-#define TEMP_PATH "../../data/schools.tmp"
+#define FILE_PATH "../../data/students.txt"
+#define TEMP_PATH "../../data/students.tmp"
 
-int delete_school(int id) {
+int delete_student(int id) {
     FILE *file = fopen(FILE_PATH, "r");
     if (!file) {
         perror("Erro ao abrir o arquivo");
@@ -22,16 +22,16 @@ int delete_school(int id) {
         return 0;
     }
 
-    School curr;
+    Student curr;
     int curr_id;
     int found = 0;
 
-    while (fscanf(file, "%d;%d;%[^;];%[^\n]\n", &curr_id, &curr.user_id, curr.name, curr.address) == 4) {
+    while (fscanf(file, "%d;%d;%[^;];%[^;];%[^;];%[^\n]\n", &curr_id, &curr.classroom_id, curr.name, curr.rg, curr.cpf, curr.birth_date) == 6) {
         if (curr_id == id) {
             found = 1;
             continue;
         }
-        fprintf(temp, "%d;%d;%s;%s\n", curr_id, curr.user_id, curr.name, curr.address);
+        fprintf(temp, "%d;%d;%s;%s;%s;%s\n", curr_id, curr.classroom_id, curr.name, curr.rg, curr.cpf, curr.birth_date);
     }
 
     fclose(file);

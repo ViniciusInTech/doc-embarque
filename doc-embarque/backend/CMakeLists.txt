@@ -16,11 +16,17 @@ add_executable(doc_embarque
         src/use_cases/delete_user.c
         src/use_cases/create_class.c
         src/use_cases/create_student.c
+        src/use_cases/update_student.c
+        src/use_cases/delete_student.c
+        src/use_cases/read_student.c
         src/use_cases/delete_class.c
         src/use_cases/update_class.c
         src/use_cases/read_class.c
         include/use_cases/delete_school.h
         src/use_cases/delete_school.c
+        src/use_cases/update_school.c
+        src/use_cases/delete_school.c
+        src/use_cases/read_school.c
 )
 
 set_target_properties(doc_embarque PROPERTIES

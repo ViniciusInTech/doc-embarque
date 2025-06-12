@@ -1,14 +1,14 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
+#include <stdlib.h>
 
 #include "../../include/models/school.h"
-#include "../../include/use_cases/delete_school.h"
+#include "../../include/use_cases/update_school.h"
 
 #define FILE_PATH "../../data/schools.txt"
 #define TEMP_PATH "../../data/schools.tmp"
 
-int delete_school(int id) {
+int update_school(School updated) {
     FILE *file = fopen(FILE_PATH, "r");
     if (!file) {
         perror("Erro ao abrir o arquivo");
@@ -23,15 +23,16 @@ int delete_school(int id) {
     }
 
     School curr;
-    int curr_id;
+    int id;
     int found = 0;
 
-    while (fscanf(file, "%d;%d;%[^;];%[^\n]\n", &curr_id, &curr.user_id, curr.name, curr.address) == 4) {
-        if (curr_id == id) {
+    while (fscanf(file, "%d;%d;%[^;];%[^\n]\n", &id, &curr.user_id, curr.name, curr.address) == 4) {
+        if (id == updated.id) {
             found = 1;
-            continue;
+            if (strlen(updated.name) > 0) strcpy(curr.name, updated.name);
+            if (strlen(updated.address) > 0) strcpy(curr.address, updated.address);
         }
-        fprintf(temp, "%d;%d;%s;%s\n", curr_id, curr.user_id, curr.name, curr.address);
+        fprintf(temp, "%d;%d;%s;%s\n", id, curr.user_id, curr.name, curr.address);
     }
 
     fclose(file);
