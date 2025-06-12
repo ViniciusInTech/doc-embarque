@@ -6,6 +6,7 @@
 #include "include/models/school.h"
 #include "include/models/class.h"
 #include "include/models/student.h"
+#include "include/models/contact.h"
 
 #include "include/use_cases/create_user.h"
 #include "include/use_cases/login.h"
@@ -23,6 +24,10 @@
 #include "include/use_cases/update_student.h"
 #include "include/use_cases/delete_student.h"
 #include "include/use_cases/read_student.h"
+#include "include/use_cases/create_contact.h"
+#include "include/use_cases/read_contact.h"
+#include "include/use_cases/update_contact.h"
+#include "include/use_cases/delete_contact.h"
 
 static void print_menu() {
     printf("\n== DocEmbarque Teste ==\n");
@@ -42,6 +47,10 @@ static void print_menu() {
     printf("14 - Listar alunos\n");
     printf("15 - Atualizar aluno\n");
     printf("16 - Remover aluno\n");
+    printf("17 - Criar contato\n");
+    printf("18 - Listar contatos\n");
+    printf("19 - Atualizar contato\n");
+    printf("20 - Remover contato\n");
     printf("0 - Sair\n> ");
 }
 
@@ -194,6 +203,49 @@ int main() {
                     printf("Aluno removido.\n");
                 else
                     printf("Aluno não encontrado.\n");
+                break;
+            }
+            case 17: {
+                ContactPerson c = create_contact_cli();
+                if (c.id != -1)
+                    printf("Contato '%s' cadastrado com ID %d.\n", c.name, c.id);
+                break;
+            }
+            case 18:
+                read_contacts();
+                break;
+            case 19: {
+                ContactPerson c;
+                char buffer[128];
+                printf("ID do contato: ");
+                fgets(buffer, sizeof(buffer), stdin);
+                c.id = atoi(buffer);
+                printf("ID da escola (0 para manter): ");
+                fgets(buffer, sizeof(buffer), stdin);
+                c.school_id = atoi(buffer);
+                printf("Nome (deixe vazio para manter): ");
+                fgets(c.name, sizeof(c.name), stdin);
+                c.name[strcspn(c.name, "\n")] = '\0';
+                printf("Telefone (deixe vazio para manter): ");
+                fgets(c.phone, sizeof(c.phone), stdin);
+                c.phone[strcspn(c.phone, "\n")] = '\0';
+                printf("Email (deixe vazio para manter): ");
+                fgets(c.email, sizeof(c.email), stdin);
+                c.email[strcspn(c.email, "\n")] = '\0';
+                if (update_contact(c))
+                    printf("Contato atualizado.\n");
+                else
+                    printf("Contato não encontrado.\n");
+                break;
+            }
+            case 20: {
+                char buf[32];
+                printf("ID do contato a remover: ");
+                fgets(buf, sizeof(buf), stdin);
+                if (delete_contact(atoi(buf)))
+                    printf("Contato removido.\n");
+                else
+                    printf("Contato não encontrado.\n");
                 break;
             }
             case 0:

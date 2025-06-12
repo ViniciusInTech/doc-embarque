@@ -27,6 +27,10 @@ add_executable(doc_embarque
         src/use_cases/update_school.c
         src/use_cases/delete_school.c
         src/use_cases/read_school.c
+        src/use_cases/create_contact.c
+        src/use_cases/read_contact.c
+        src/use_cases/update_contact.c
+        src/use_cases/delete_contact.c
 )
 
 set_target_properties(doc_embarque PROPERTIES
