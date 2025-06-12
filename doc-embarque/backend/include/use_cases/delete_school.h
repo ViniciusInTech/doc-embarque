@@ -1,7 +1,8 @@
 #ifndef DELETE_SCHOOL_H
 #define DELETE_SCHOOL_H
 
-void delete_school(int school_id);
+#include "../models/school.h"
 
+int delete_school(int id);
 
-#endif //DELETE_SCHOOL_H
+#endif
