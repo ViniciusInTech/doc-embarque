@@ -24,6 +24,25 @@ int get_next_school_id() {
     return id + 1;
 }
 
+int school_exists(int id) {
+    FILE *file = fopen(FILE_PATH, "r");
+    School s;
+    int temp;
+    int found = 0;
+
+    if (file != NULL) {
+        while (fscanf(file, "%d;%d;%[^;];%s\n", &temp, &s.user_id, s.name, s.address) == 4) {
+            if (temp == id) {
+                found = 1;
+                break;
+            }
+        }
+        fclose(file);
+    }
+
+    return found;
+}
+
 School save_school(School school) {
     ensure_data_directory();
     FILE *file = fopen(FILE_PATH, "a");
