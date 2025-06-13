@@ -31,6 +31,7 @@ add_executable(doc_embarque
         src/use_cases/read_contact.c
         src/use_cases/update_contact.c
         src/use_cases/delete_contact.c
+        src/use_cases/read_user.c
 )
 
 set_target_properties(doc_embarque PROPERTIES

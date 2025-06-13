@@ -28,6 +28,7 @@
 #include "include/use_cases/read_contact.h"
 #include "include/use_cases/update_contact.h"
 #include "include/use_cases/delete_contact.h"
+#include "include/use_cases/read_user.h"
 
 static void print_menu() {
     printf("\n== DocEmbarque Teste ==\n");
@@ -51,6 +52,7 @@ static void print_menu() {
     printf("18 - Listar contatos\n");
     printf("19 - Atualizar contato\n");
     printf("20 - Remover contato\n");
+    printf("21 - Listar usuarios\n");
     printf("0 - Sair\n> ");
 }
 
@@ -248,6 +250,9 @@ int main() {
                     printf("Contato não encontrado.\n");
                 break;
             }
+            case 21:
+                read_users();
+                break;
             case 0:
                 break;
             default:
