@@ -47,6 +47,7 @@ add_executable(doc_embarque
         src/use_cases/read_travel_insurance.c
         src/use_cases/update_travel_insurance.c
         src/use_cases/delete_travel_insurance.c
+        src/use_cases/read_user.c
 )
 
 set_target_properties(doc_embarque PROPERTIES

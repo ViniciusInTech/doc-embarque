@@ -48,6 +48,7 @@
 #include "include/use_cases/read_travel_insurance.h"
 #include "include/use_cases/update_travel_insurance.h"
 #include "include/use_cases/delete_travel_insurance.h"
+#include "include/use_cases/read_user.h"
 
 static void print_menu() {
     printf("\n== DocEmbarque Teste ==\n");
@@ -71,22 +72,23 @@ static void print_menu() {
     printf("18 - Listar contatos\n");
     printf("19 - Atualizar contato\n");
     printf("20 - Remover contato\n");
-    printf("21 - Criar pagamento\n");
-    printf("22 - Listar pagamentos\n");
-    printf("23 - Atualizar pagamento\n");
-    printf("24 - Remover pagamento\n");
-    printf("25 - Criar parcela\n");
-    printf("26 - Listar parcelas\n");
-    printf("27 - Atualizar parcela\n");
-    printf("28 - Remover parcela\n");
-    printf("29 - Registrar embarque\n");
-    printf("30 - Listar embarques\n");
-    printf("31 - Atualizar embarque\n");
-    printf("32 - Remover embarque\n");
-    printf("33 - Criar seguro viagem\n");
-    printf("34 - Listar seguros\n");
-    printf("35 - Atualizar seguro\n");
-    printf("36 - Remover seguro\n");
+    printf("21 - Listar usuarios\n");
+    printf("22 - Criar pagamento\n");
+    printf("23 - Listar pagamentos\n");
+    printf("24 - Atualizar pagamento\n");
+    printf("25 - Remover pagamento\n");
+    printf("26 - Criar parcela\n");
+    printf("27 - Listar parcelas\n");
+    printf("28 - Atualizar parcela\n");
+    printf("29 - Remover parcela\n");
+    printf("30 - Registrar embarque\n");
+    printf("31 - Listar embarques\n");
+    printf("32 - Atualizar embarque\n");
+    printf("33 - Remover embarque\n");
+    printf("34 - Criar seguro viagem\n");
+    printf("35 - Listar seguros\n");
+    printf("36 - Atualizar seguro\n");
+    printf("37 - Remover seguro\n");
     printf("0 - Sair\n> ");
 }
 
@@ -284,16 +286,19 @@ int main() {
                     printf("Contato não encontrado.\n");
                 break;
             }
-            case 21: {
+            case 21:
+                read_users();
+                break;
+            case 22: {
                 Payment p = create_payment_cli();
                 if (p.id != -1)
                     printf("Pagamento registrado com ID %d.\n", p.id);
                 break;
             }
-            case 22:
+            case 23:
                 read_payments();
                 break;
-            case 23: {
+            case 24: {
                 Payment p;
                 char buffer[128];
                 printf("ID do pagamento: ");
@@ -314,7 +319,7 @@ int main() {
                     printf("Pagamento não encontrado.\n");
                 break;
             }
-            case 24: {
+            case 25: {
                 char buf[32];
                 printf("ID do pagamento a remover: ");
                 fgets(buf, sizeof(buf), stdin);
@@ -324,16 +329,16 @@ int main() {
                     printf("Pagamento não encontrado.\n");
                 break;
             }
-            case 25: {
+            case 26: {
                 Installment i = create_installment_cli();
                 if (i.id != -1)
                     printf("Parcela criada com ID %d.\n", i.id);
                 break;
             }
-            case 26:
+            case 27:
                 read_installments();
                 break;
-            case 27: {
+            case 28: {
                 Installment i;
                 char buffer[128];
                 printf("ID da parcela: ");
@@ -358,7 +363,7 @@ int main() {
                     printf("Parcela não encontrada.\n");
                 break;
             }
-            case 28: {
+            case 29: {
                 char buf[32];
                 printf("ID da parcela a remover: ");
                 fgets(buf, sizeof(buf), stdin);
@@ -368,16 +373,16 @@ int main() {
                     printf("Parcela não encontrada.\n");
                 break;
             }
-            case 29: {
+            case 30: {
                 Boarding b = create_boarding_cli();
                 if (b.id != -1)
                     printf("Embarque registrado com ID %d.\n", b.id);
                 break;
             }
-            case 30:
+            case 31:
                 read_boardings();
                 break;
-            case 31: {
+            case 32: {
                 Boarding b;
                 char buffer[128];
                 printf("ID do embarque: ");
@@ -399,7 +404,7 @@ int main() {
                     printf("Embarque não encontrado.\n");
                 break;
             }
-            case 32: {
+            case 33: {
                 char buf[32];
                 printf("ID do embarque a remover: ");
                 fgets(buf, sizeof(buf), stdin);
@@ -409,16 +414,16 @@ int main() {
                     printf("Embarque não encontrado.\n");
                 break;
             }
-            case 33: {
+            case 34: {
                 TravelInsurance t = create_travel_insurance_cli();
                 if (t.id != -1)
                     printf("Seguro criado com ID %d.\n", t.id);
                 break;
             }
-            case 34:
+            case 35:
                 read_travel_insurances();
                 break;
-            case 35: {
+            case 36: {
                 TravelInsurance t;
                 char buffer[128];
                 printf("ID do seguro: ");
@@ -439,7 +444,7 @@ int main() {
                     printf("Seguro não encontrado.\n");
                 break;
             }
-            case 36: {
+            case 37: {
                 char buf[32];
                 printf("ID do seguro a remover: ");
                 fgets(buf, sizeof(buf), stdin);
