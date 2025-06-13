@@ -31,6 +31,22 @@ add_executable(doc_embarque
         src/use_cases/read_contact.c
         src/use_cases/update_contact.c
         src/use_cases/delete_contact.c
+        src/use_cases/create_payment.c
+        src/use_cases/read_payment.c
+        src/use_cases/update_payment.c
+        src/use_cases/delete_payment.c
+        src/use_cases/create_installment.c
+        src/use_cases/read_installment.c
+        src/use_cases/update_installment.c
+        src/use_cases/delete_installment.c
+        src/use_cases/create_boarding.c
+        src/use_cases/read_boarding.c
+        src/use_cases/update_boarding.c
+        src/use_cases/delete_boarding.c
+        src/use_cases/create_travel_insurance.c
+        src/use_cases/read_travel_insurance.c
+        src/use_cases/update_travel_insurance.c
+        src/use_cases/delete_travel_insurance.c
 )
 
 set_target_properties(doc_embarque PROPERTIES
