@@ -7,6 +7,10 @@
 #include "include/models/class.h"
 #include "include/models/student.h"
 #include "include/models/contact.h"
+#include "include/models/payment.h"
+#include "include/models/installment.h"
+#include "include/models/boarding.h"
+#include "include/models/travel_insurance.h"
 
 #include "include/use_cases/create_user.h"
 #include "include/use_cases/login.h"
@@ -28,6 +32,22 @@
 #include "include/use_cases/read_contact.h"
 #include "include/use_cases/update_contact.h"
 #include "include/use_cases/delete_contact.h"
+#include "include/use_cases/create_payment.h"
+#include "include/use_cases/read_payment.h"
+#include "include/use_cases/update_payment.h"
+#include "include/use_cases/delete_payment.h"
+#include "include/use_cases/create_installment.h"
+#include "include/use_cases/read_installment.h"
+#include "include/use_cases/update_installment.h"
+#include "include/use_cases/delete_installment.h"
+#include "include/use_cases/create_boarding.h"
+#include "include/use_cases/read_boarding.h"
+#include "include/use_cases/update_boarding.h"
+#include "include/use_cases/delete_boarding.h"
+#include "include/use_cases/create_travel_insurance.h"
+#include "include/use_cases/read_travel_insurance.h"
+#include "include/use_cases/update_travel_insurance.h"
+#include "include/use_cases/delete_travel_insurance.h"
 #include "include/use_cases/read_user.h"
 
 static void print_menu() {
@@ -53,6 +73,22 @@ static void print_menu() {
     printf("19 - Atualizar contato\n");
     printf("20 - Remover contato\n");
     printf("21 - Listar usuarios\n");
+    printf("22 - Criar pagamento\n");
+    printf("23 - Listar pagamentos\n");
+    printf("24 - Atualizar pagamento\n");
+    printf("25 - Remover pagamento\n");
+    printf("26 - Criar parcela\n");
+    printf("27 - Listar parcelas\n");
+    printf("28 - Atualizar parcela\n");
+    printf("29 - Remover parcela\n");
+    printf("30 - Registrar embarque\n");
+    printf("31 - Listar embarques\n");
+    printf("32 - Atualizar embarque\n");
+    printf("33 - Remover embarque\n");
+    printf("34 - Criar seguro viagem\n");
+    printf("35 - Listar seguros\n");
+    printf("36 - Atualizar seguro\n");
+    printf("37 - Remover seguro\n");
     printf("0 - Sair\n> ");
 }
 
@@ -253,6 +289,171 @@ int main() {
             case 21:
                 read_users();
                 break;
+            case 22: {
+                Payment p = create_payment_cli();
+                if (p.id != -1)
+                    printf("Pagamento registrado com ID %d.\n", p.id);
+                break;
+            }
+            case 23:
+                read_payments();
+                break;
+            case 24: {
+                Payment p;
+                char buffer[128];
+                printf("ID do pagamento: ");
+                fgets(buffer, sizeof(buffer), stdin);
+                p.id = atoi(buffer);
+                printf("ID do aluno (0 para manter): ");
+                fgets(buffer, sizeof(buffer), stdin);
+                p.student_id = atoi(buffer);
+                printf("Valor (0 para manter): ");
+                fgets(buffer, sizeof(buffer), stdin);
+                p.amount = atof(buffer);
+                printf("Metodo (deixe vazio para manter): ");
+                fgets(p.method, sizeof(p.method), stdin);
+                p.method[strcspn(p.method, "\n")] = '\0';
+                if (update_payment(p))
+                    printf("Pagamento atualizado.\n");
+                else
+                    printf("Pagamento não encontrado.\n");
+                break;
+            }
+            case 25: {
+                char buf[32];
+                printf("ID do pagamento a remover: ");
+                fgets(buf, sizeof(buf), stdin);
+                if (delete_payment(atoi(buf)))
+                    printf("Pagamento removido.\n");
+                else
+                    printf("Pagamento não encontrado.\n");
+                break;
+            }
+            case 26: {
+                Installment i = create_installment_cli();
+                if (i.id != -1)
+                    printf("Parcela criada com ID %d.\n", i.id);
+                break;
+            }
+            case 27:
+                read_installments();
+                break;
+            case 28: {
+                Installment i;
+                char buffer[128];
+                printf("ID da parcela: ");
+                fgets(buffer, sizeof(buffer), stdin);
+                i.id = atoi(buffer);
+                printf("ID do pagamento (0 para manter): ");
+                fgets(buffer, sizeof(buffer), stdin);
+                i.payment_id = atoi(buffer);
+                printf("Valor (0 para manter): ");
+                fgets(buffer, sizeof(buffer), stdin);
+                i.amount = atof(buffer);
+                printf("Vencimento (deixe vazio para manter): ");
+                fgets(i.due_date, sizeof(i.due_date), stdin);
+                i.due_date[strcspn(i.due_date, "\n")] = '\0';
+                printf("Pago (0/1 ou -1 para manter): ");
+                fgets(buffer, sizeof(buffer), stdin);
+                i.paid = atoi(buffer);
+                if (i.paid != 0 && i.paid != 1) i.paid = -1;
+                if (update_installment(i))
+                    printf("Parcela atualizada.\n");
+                else
+                    printf("Parcela não encontrada.\n");
+                break;
+            }
+            case 29: {
+                char buf[32];
+                printf("ID da parcela a remover: ");
+                fgets(buf, sizeof(buf), stdin);
+                if (delete_installment(atoi(buf)))
+                    printf("Parcela removida.\n");
+                else
+                    printf("Parcela não encontrada.\n");
+                break;
+            }
+            case 30: {
+                Boarding b = create_boarding_cli();
+                if (b.id != -1)
+                    printf("Embarque registrado com ID %d.\n", b.id);
+                break;
+            }
+            case 31:
+                read_boardings();
+                break;
+            case 32: {
+                Boarding b;
+                char buffer[128];
+                printf("ID do embarque: ");
+                fgets(buffer, sizeof(buffer), stdin);
+                b.id = atoi(buffer);
+                printf("ID do aluno (0 para manter): ");
+                fgets(buffer, sizeof(buffer), stdin);
+                b.student_id = atoi(buffer);
+                printf("Data (deixe vazio para manter): ");
+                fgets(b.date, sizeof(b.date), stdin);
+                b.date[strcspn(b.date, "\n")] = '\0';
+                printf("Embarcou (0/1 ou -1 para manter): ");
+                fgets(buffer, sizeof(buffer), stdin);
+                b.boarded = atoi(buffer);
+                if (b.boarded != 0 && b.boarded != 1) b.boarded = -1;
+                if (update_boarding(b))
+                    printf("Embarque atualizado.\n");
+                else
+                    printf("Embarque não encontrado.\n");
+                break;
+            }
+            case 33: {
+                char buf[32];
+                printf("ID do embarque a remover: ");
+                fgets(buf, sizeof(buf), stdin);
+                if (delete_boarding(atoi(buf)))
+                    printf("Embarque removido.\n");
+                else
+                    printf("Embarque não encontrado.\n");
+                break;
+            }
+            case 34: {
+                TravelInsurance t = create_travel_insurance_cli();
+                if (t.id != -1)
+                    printf("Seguro criado com ID %d.\n", t.id);
+                break;
+            }
+            case 35:
+                read_travel_insurances();
+                break;
+            case 36: {
+                TravelInsurance t;
+                char buffer[128];
+                printf("ID do seguro: ");
+                fgets(buffer, sizeof(buffer), stdin);
+                t.id = atoi(buffer);
+                printf("ID do aluno (0 para manter): ");
+                fgets(buffer, sizeof(buffer), stdin);
+                t.student_id = atoi(buffer);
+                printf("Numero da apolice (deixe vazio para manter): ");
+                fgets(t.policy_number, sizeof(t.policy_number), stdin);
+                t.policy_number[strcspn(t.policy_number, "\n")] = '\0';
+                printf("Seguradora (deixe vazio para manter): ");
+                fgets(t.provider, sizeof(t.provider), stdin);
+                t.provider[strcspn(t.provider, "\n")] = '\0';
+                if (update_travel_insurance(t))
+                    printf("Seguro atualizado.\n");
+                else
+                    printf("Seguro não encontrado.\n");
+                break;
+            }
+            case 37: {
+                char buf[32];
+                printf("ID do seguro a remover: ");
+                fgets(buf, sizeof(buf), stdin);
+                if (delete_travel_insurance(atoi(buf)))
+                    printf("Seguro removido.\n");
+                else
+                    printf("Seguro não encontrado.\n");
+                break;
+            }
             case 0:
                 break;
             default:
