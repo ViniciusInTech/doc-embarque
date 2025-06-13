@@ -83,6 +83,15 @@ School create_school(School school) {
 
 School create_school_cli() {
     School escola;
+    printf("ID do usuário: ");
+    scanf("%d", &escola.user_id);
+    getchar();
+
+    if (!verify_user(escola.user_id)) {
+        printf("Usuário com ID %d não encontrado.\n", escola.user_id);
+        escola.user_id = -1;
+        return escola;
+    }
 
     printf("Nome da escola: ");
     fgets(escola.name, sizeof(escola.name), stdin);
@@ -92,7 +101,10 @@ School create_school_cli() {
     fgets(escola.address, sizeof(escola.address), stdin);
     strtok(escola.address, "\n");
 
-    escola.user_id = 1;
+    escola = save_school(escola);
+    if (escola.user_id != -1) {
+        printf("Escola salva com sucesso.\n");
+    }
 
-    return create_school(escola);
+    return escola;
 }
