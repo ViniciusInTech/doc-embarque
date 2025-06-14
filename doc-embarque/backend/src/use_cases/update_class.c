@@ -6,11 +6,11 @@
 
 #define DATA_CLASS "../../data/class.txt"
 
-void update_class(Class updated) {
+int update_class(Class updated) {
     FILE *file = fopen(DATA_CLASS, "r");
     if (file == NULL) {
         printf("Erro ao abrir o arquivo.\n");
-        return;
+        return 0;
     }
 
     Class *classes = NULL;
@@ -31,7 +31,7 @@ void update_class(Class updated) {
             perror("Erro de memória");
             free(classes);
             fclose(file);
-            return;
+            return 0;
         }
         classes = tmp;
         classes[count++] = to_store;
@@ -41,14 +41,14 @@ void update_class(Class updated) {
     if (!found) {
         free(classes);
         printf("Classe com ID %d não encontrada.\n", updated.class_id);
-        return;
+        return 0;
     }
 
     file = fopen(DATA_CLASS, "w");
     if (file == NULL) {
         perror("Erro ao escrever no arquivo");
         free(classes);
-        return;
+        return 0;
     }
 
     for (size_t i = 0; i < count; ++i) {
@@ -59,4 +59,5 @@ void update_class(Class updated) {
     free(classes);
 
     printf("Classe atualizada com sucesso.\n");
+    return 1;
 }

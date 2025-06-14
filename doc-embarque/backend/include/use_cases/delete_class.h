@@ -3,6 +3,6 @@
 
 #include "../models/class.h"
 
-void delete_class(int class_id);
+int delete_class(int class_id);
 
 #endif

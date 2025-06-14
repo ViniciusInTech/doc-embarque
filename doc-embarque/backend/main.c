@@ -187,14 +187,20 @@ int main() {
                 printf("Alunos confirmados (0 para manter): ");
                 fgets(buffer, sizeof(buffer), stdin);
                 c.confirmed_students = atoi(buffer);
-                update_class(c);
+                if (update_class(c))
+                    printf("Turma atualizada.\n");
+                else
+                    printf("Turma não encontrada.\n");
                 break;
             }
             case 12: {
                 char buf[32];
                 printf("ID da turma a remover: ");
                 fgets(buf, sizeof(buf), stdin);
-                delete_class(atoi(buf));
+                if (delete_class(atoi(buf)))
+                    printf("Turma removida.\n");
+                else
+                    printf("Turma não encontrada.\n");
                 break;
             }
             case 13: {

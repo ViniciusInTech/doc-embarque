@@ -7,16 +7,16 @@
 
 #define FILE_PATH "../../data/class.txt"
 
-void delete_class(int class_id) {
+int delete_class(int class_id) {
     if (class_id <= 0 || !class_exists(class_id)) {
         printf("ID inválido ou classe não existe.\n");
-        return;
+        return 0;
     }
 
     FILE *file = fopen(FILE_PATH, "r");
     if (file == NULL) {
         printf("Erro ao abrir o arquivo.\n");
-        return;
+        return 0;
     }
 
     Class *classes = NULL;
@@ -31,7 +31,7 @@ void delete_class(int class_id) {
                 perror("Erro de memória");
                 free(classes);
                 fclose(file);
-                return;
+                return 0;
             }
             classes = tmp;
             classes[count++] = c;
@@ -43,7 +43,7 @@ void delete_class(int class_id) {
     if (file == NULL) {
         perror("Erro ao escrever no arquivo");
         free(classes);
-        return;
+        return 0;
     }
 
     for (size_t i = 0; i < count; ++i) {
@@ -55,4 +55,5 @@ void delete_class(int class_id) {
     free(classes);
 
     printf("Classe com ID %d deletada com sucesso.\n", class_id);
+    return 1;
 }

@@ -3,6 +3,6 @@
 
 #include "../models/class.h"
 
-void update_class(Class updated);
+int update_class(Class updated);
 
 #endif
