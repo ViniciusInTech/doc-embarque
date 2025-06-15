@@ -4,13 +4,12 @@
 #include "../../include/models/class.h"
 #include "../../include/models/school.h"
 #include "../../include/use_cases/create_class.h"
+
+#include "paths.h"
 #include "../../include/utils.h"
 
-#define FILE_PATH "../../data/class.txt"
-#define SCHOOL_FILE "../../data/schools.txt"
-
 int get_next_class_id() {
-    FILE *file = fopen(FILE_PATH, "r");
+    FILE *file = fopen(CLASS_FILE_PATH, "r");
     int id = 0, temp;
     Class c;
 
@@ -28,7 +27,7 @@ int get_next_class_id() {
 }
 
 int class_exists(int id) {
-    FILE *file = fopen(FILE_PATH, "r");
+    FILE *file = fopen(CLASS_FILE_PATH, "r");
     Class c;
     int temp;
     int found = 0;
@@ -48,7 +47,7 @@ int class_exists(int id) {
 }
 
 int verify_school(int id) {
-    FILE *file = fopen(SCHOOL_FILE, "r");
+    FILE *file = fopen(SCHOOLS_FILE_PATH, "r");
     School s;
     int temp;
     int found = 0;
@@ -68,7 +67,7 @@ int verify_school(int id) {
 
 Class save_class(Class c) {
     ensure_data_directory();
-    FILE *file = fopen(FILE_PATH, "a");
+    FILE *file = fopen(CLASS_FILE_PATH, "a");
     c.class_id = get_next_class_id();
 
     if (file == NULL) {

@@ -2,13 +2,13 @@
 #include <string.h>
 #include "../../include/models/school.h"
 #include "../../include/use_cases/create_school.h"
+
+#include "paths.h"
 #include "../../include/utils.h"
-#define FILE_PATH "../../data/schools.txt"
-#define FILE_PATH_USER "../../data/users.txt"
 #include "../../include/models/user.h"
 
 int get_next_school_id() {
-    FILE *file = fopen(FILE_PATH, "r");
+    FILE *file = fopen(SCHOOLS_FILE_PATH, "r");
     int id = 0, temp;
     School s;
 
@@ -25,7 +25,7 @@ int get_next_school_id() {
 }
 
 int school_exists(int id) {
-    FILE *file = fopen(FILE_PATH, "r");
+    FILE *file = fopen(SCHOOLS_FILE_PATH, "r");
     School s;
     int temp;
     int found = 0;
@@ -45,7 +45,7 @@ int school_exists(int id) {
 
 School save_school(School school) {
     ensure_data_directory();
-    FILE *file = fopen(FILE_PATH, "a");
+    FILE *file = fopen(SCHOOLS_FILE_PATH, "a");
 
     if (file == NULL) {
         perror("Erro ao abrir o arquivo");
@@ -58,7 +58,7 @@ School save_school(School school) {
 }
 
 int verify_user(int id) {
-    FILE *file = fopen(FILE_PATH_USER, "r");
+    FILE *file = fopen(USERS_FILE_PATH, "r");
     User u;
     int temp;
     int found = 0;

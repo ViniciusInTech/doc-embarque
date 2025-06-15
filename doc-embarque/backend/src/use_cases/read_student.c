@@ -3,10 +3,11 @@
 #include "../../include/models/student.h"
 #include "../../include/use_cases/read_student.h"
 
-#define FILE_PATH "../../data/students.txt"
+#include "paths.h"
+
 
 void read_students() {
-    FILE *file = fopen(FILE_PATH, "r");
+    FILE *file = fopen(STUDENTS_FILE_PATH, "r");
     if (!file) {
         printf("Erro ao abrir o arquivo.\n");
         return;

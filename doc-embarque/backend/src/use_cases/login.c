@@ -4,10 +4,11 @@
 #include "../../include/models/user.h"
 #include "../../include/use_cases/login.h"
 
-#define FILE_PATH "../../data/users.txt"
+#include "paths.h"
+
 
 int login(const char *email, const char *password, User *user) {
-    FILE *file = fopen(FILE_PATH, "r");
+    FILE *file = fopen(USERS_FILE_PATH, "r");
     if (file == NULL) {
         perror("Erro ao abrir o arquivo");
         return 0;

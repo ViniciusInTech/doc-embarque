@@ -5,17 +5,17 @@
 #include "../../include/models/contact.h"
 #include "../../include/use_cases/delete_contact.h"
 
-#define FILE_PATH "../../data/contacts.txt"
-#define TEMP_PATH "../../data/contacts.tmp"
+#include "paths.h"
+
 
 int delete_contact(int id) {
-    FILE *file = fopen(FILE_PATH, "r");
+    FILE *file = fopen(CONTACTS_FILE_PATH, "r");
     if (!file) {
         perror("Erro ao abrir o arquivo");
         return 0;
     }
 
-    FILE *temp = fopen(TEMP_PATH, "w");
+    FILE *temp = fopen(CONTACTS_TEMP_PATH, "w");
     if (!temp) {
         perror("Erro ao criar arquivo temporario");
         fclose(file);
@@ -38,11 +38,11 @@ int delete_contact(int id) {
     fclose(temp);
 
     if (!found) {
-        remove(TEMP_PATH);
+        remove(CONTACTS_TEMP_PATH);
         return 0;
     }
 
-    remove(FILE_PATH);
-    rename(TEMP_PATH, FILE_PATH);
+    remove(CONTACTS_FILE_PATH);
+    rename(CONTACTS_TEMP_PATH, CONTACTS_FILE_PATH);
     return 1;
 }

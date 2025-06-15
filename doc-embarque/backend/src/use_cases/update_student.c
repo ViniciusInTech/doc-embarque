@@ -5,17 +5,17 @@
 #include "../../include/models/student.h"
 #include "../../include/use_cases/update_student.h"
 
-#define FILE_PATH "../../data/students.txt"
-#define TEMP_PATH "../../data/students.tmp"
+#include "paths.h"
+
 
 int update_student(Student updated) {
-    FILE *file = fopen(FILE_PATH, "r");
+    FILE *file = fopen(STUDENTS_FILE_PATH, "r");
     if (!file) {
         perror("Erro ao abrir o arquivo");
         return 0;
     }
 
-    FILE *temp = fopen(TEMP_PATH, "w");
+    FILE *temp = fopen(STUDENTS_TEMP_PATH, "w");
     if (!temp) {
         perror("Erro ao criar arquivo temporario");
         fclose(file);
@@ -42,11 +42,11 @@ int update_student(Student updated) {
     fclose(temp);
 
     if (!found) {
-        remove(TEMP_PATH);
+        remove(STUDENTS_TEMP_PATH);
         return 0;
     }
 
-    remove(FILE_PATH);
-    rename(TEMP_PATH, FILE_PATH);
+    remove(STUDENTS_FILE_PATH);
+    rename(STUDENTS_TEMP_PATH, STUDENTS_FILE_PATH);
     return 1;
 }

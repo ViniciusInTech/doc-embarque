@@ -2,10 +2,11 @@
 #include "../../include/models/school.h"
 #include "../../include/use_cases/read_school.h"
 
-#define FILE_PATH "../../data/schools.txt"
+#include "paths.h"
+
 
 void read_schools() {
-    FILE *file = fopen(FILE_PATH, "r");
+    FILE *file = fopen(SCHOOLS_FILE_PATH, "r");
     if (!file) {
         printf("Erro ao abrir o arquivo.\n");
         return;

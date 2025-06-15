@@ -3,10 +3,11 @@
 #include "../../include/models/class.h"
 #include "../../include/use_cases/read_class.h"
 
-#define DATA_CLASS "../../data/class.txt"
+#include "paths.h"
+
 
 void read_classes() {
-    FILE *file = fopen(DATA_CLASS, "r");
+    FILE *file = fopen(CLASS_FILE_PATH, "r");
     Class c;
 
     if (file == NULL) {

@@ -1,4 +1,8 @@
 #include "../include/utils.h"
+
+#include "paths.h"
+#include "../include/paths.h"
+
 #ifdef _WIN32
 #include <direct.h>
 #else
@@ -6,7 +10,6 @@
 #include <sys/types.h>
 #endif
 
-#define DATA_DIR "../../data"
 
 void ensure_data_directory() {
 #ifdef _WIN32

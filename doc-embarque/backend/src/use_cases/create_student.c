@@ -4,13 +4,13 @@
 #include "../../include/models/student.h"
 #include "../../include/models/class.h"
 #include "../../include/use_cases/create_student.h"
+
+#include "paths.h"
 #include "../../include/utils.h"
 
-#define FILE_PATH "../../data/students.txt"
-#define CLASS_FILE "../../data/class.txt"
 
 static int get_next_student_id() {
-    FILE *file = fopen(FILE_PATH, "r");
+    FILE *file = fopen(STUDENTS_FILE_PATH, "r");
     int id = 0, temp;
     Student s;
     if (file != NULL) {
@@ -23,7 +23,7 @@ static int get_next_student_id() {
 }
 
 static int verify_classroom(int id) {
-    FILE *file = fopen(CLASS_FILE, "r");
+    FILE *file = fopen(CLASS_FILE_PATH, "r");
     Class c;
     int temp;
     int found = 0;
@@ -41,7 +41,7 @@ static int verify_classroom(int id) {
 
 static Student save_student(Student s) {
     ensure_data_directory();
-    FILE *file = fopen(FILE_PATH, "a");
+    FILE *file = fopen(STUDENTS_FILE_PATH, "a");
     if (file == NULL) {
         perror("Erro ao abrir o arquivo");
         s.id = -1;

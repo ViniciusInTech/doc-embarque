@@ -4,14 +4,14 @@
 #include "../../include/models/contact.h"
 #include "../../include/models/school.h"
 #include "../../include/use_cases/create_contact.h"
+
+#include "paths.h"
 #include "../../include/use_cases/create_class.h" // para funcao verify_school
 #include "../../include/utils.h"
 
-#define FILE_PATH "../../data/contacts.txt"
-#define SCHOOL_FILE "../../data/schools.txt"
 
 int get_next_contact_id() {
-    FILE *file = fopen(FILE_PATH, "r");
+    FILE *file = fopen(CONTACTS_FILE_PATH, "r");
     int id = 0, temp;
     ContactPerson c;
 
@@ -27,7 +27,7 @@ int get_next_contact_id() {
 }
 
 int contact_exists(int id) {
-    FILE *file = fopen(FILE_PATH, "r");
+    FILE *file = fopen(CONTACTS_FILE_PATH, "r");
     ContactPerson c;
     int temp;
     int found = 0;
@@ -47,7 +47,7 @@ int contact_exists(int id) {
 
 ContactPerson save_contact(ContactPerson c) {
     ensure_data_directory();
-    FILE *file = fopen(FILE_PATH, "a");
+    FILE *file = fopen(CONTACTS_FILE_PATH, "r");
 
     if (file == NULL) {
         perror("Erro ao abrir o arquivo");

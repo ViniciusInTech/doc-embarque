@@ -3,10 +3,11 @@
 #include "../../include/models/contact.h"
 #include "../../include/use_cases/read_contact.h"
 
-#define FILE_PATH "../../data/contacts.txt"
+#include "paths.h"
+
 
 void read_contacts() {
-    FILE *file = fopen(FILE_PATH, "r");
+    FILE *file = fopen(CONTACTS_FILE_PATH, "r");
     if (!file) {
         printf("Erro ao abrir o arquivo.\n");
         return;

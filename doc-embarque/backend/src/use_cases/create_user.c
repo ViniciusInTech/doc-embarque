@@ -10,14 +10,13 @@
 
 #include "../../include/models/user.h"
 #include "../../include/use_cases/create_user.h"
-#include "../../include/utils.h"
 
-#define DATA_DIR "../../data"
-#define FILE_PATH "../../data/users.txt"
+#include "paths.h"
+#include "../../include/utils.h"
 
 
 static int get_next_user_id() {
-    FILE *file = fopen(FILE_PATH, "r");
+    FILE *file = fopen(USERS_FILE_PATH, "r");
     int id = 0, temp;
     User u;
 
@@ -34,7 +33,7 @@ static int get_next_user_id() {
 static User save_user(User user) {
     ensure_data_directory();
 
-    FILE *file = fopen(FILE_PATH, "a");
+    FILE *file = fopen(USERS_FILE_PATH, "a");
     if (file == NULL) {
         perror("Erro ao abrir o arquivo");
         user.id = -1;

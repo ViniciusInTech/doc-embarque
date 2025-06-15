@@ -5,7 +5,7 @@
 #include "../../include/use_cases/delete_class.h"
 #include <stdlib.h>
 
-#define FILE_PATH "../../data/class.txt"
+#include "paths.h"
 
 int delete_class(int class_id) {
     if (class_id <= 0 || !class_exists(class_id)) {
@@ -13,7 +13,7 @@ int delete_class(int class_id) {
         return 0;
     }
 
-    FILE *file = fopen(FILE_PATH, "r");
+    FILE *file = fopen(CLASS_FILE_PATH, "r");
     if (file == NULL) {
         printf("Erro ao abrir o arquivo.\n");
         return 0;
@@ -39,7 +39,7 @@ int delete_class(int class_id) {
                    }
     fclose(file);
 
-    file = fopen(FILE_PATH, "w");
+    file = fopen(CLASS_FILE_PATH, "w");
     if (file == NULL) {
         perror("Erro ao escrever no arquivo");
         free(classes);

@@ -5,21 +5,20 @@
 #include "../../include/models/user.h"
 #include "../../include/use_cases/update_user.h"
 
-#define FILE_PATH "../../data/users.txt"
-#define TEMP_PATH "../../data/users.tmp"
+#include "paths.h"
 
 void remove_newline(char *str) {
     str[strcspn(str, "\n")] = '\0';
 }
 
 int update_user(User updated) {
-    FILE *file = fopen(FILE_PATH, "r");
+    FILE *file = fopen(USERS_FILE_PATH, "r");
     if (file == NULL) {
         perror("Erro ao abrir o arquivo");
         return 0;
     }
 
-    FILE *temp = fopen(TEMP_PATH, "w");
+    FILE *temp = fopen(USERS_TEMP_PATH, "w");
     if (temp == NULL) {
         perror("Erro ao criar arquivo temporário");
         fclose(file);
@@ -50,12 +49,12 @@ int update_user(User updated) {
     fclose(temp);
 
     if (!found) {
-        remove(TEMP_PATH);
+        remove(USERS_TEMP_PATH);
         return 0;
     }
 
-    remove(FILE_PATH);
-    rename(TEMP_PATH, FILE_PATH);
+    remove(USERS_FILE_PATH);
+    rename(USERS_TEMP_PATH, USERS_FILE_PATH);
     return 1;
 }
 

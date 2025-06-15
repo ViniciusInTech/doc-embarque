@@ -4,10 +4,11 @@
 #include "../../include/use_cases/update_class.h"
 #include <stdlib.h>
 
-#define DATA_CLASS "../../data/class.txt"
+#include "paths.h"
+
 
 int update_class(Class updated) {
-    FILE *file = fopen(DATA_CLASS, "r");
+    FILE *file = fopen(CLASS_FILE_PATH, "r");
     if (file == NULL) {
         printf("Erro ao abrir o arquivo.\n");
         return 0;
@@ -44,7 +45,7 @@ int update_class(Class updated) {
         return 0;
     }
 
-    file = fopen(DATA_CLASS, "w");
+    file = fopen(CLASS_FILE_PATH, "w");
     if (file == NULL) {
         perror("Erro ao escrever no arquivo");
         free(classes);

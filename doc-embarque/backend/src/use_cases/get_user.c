@@ -4,10 +4,11 @@
 #include "../../include/models/user.h"
 #include "../../include/use_cases/get_user.h"
 
-#define FILE_PATH "../../data/users.txt"
+#include "paths.h"
+
 
 User get_user_by_id(int id) {
-    FILE *file = fopen(FILE_PATH, "r");
+    FILE *file = fopen(USERS_FILE_PATH, "r");
     User user;
     memset(&user, 0, sizeof(User));
     user.id = -1;
