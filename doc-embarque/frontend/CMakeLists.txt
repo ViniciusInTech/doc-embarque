@@ -1,0 +1,35 @@
+cmake_minimum_required(VERSION 3.10)
+project(doc_embarque_frontend C)
+set(CMAKE_C_STANDARD 99)
+
+# Find GTK3
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(GTK3 REQUIRED gtk+-3.0)
+
+include_directories(${GTK3_INCLUDE_DIRS} ../backend/include ../backend/include/models ../backend/include/use_cases include)
+link_directories(${GTK3_LIBRARY_DIRS})
+add_definitions(${GTK3_CFLAGS_OTHER})
+
+set(BACKEND_SOURCES
+        ../backend/src/use_cases/create_user.c
+        ../backend/src/use_cases/login.c
+        ../backend/src/utils.c
+)
+
+add_executable(doc_embarque_frontend
+        src/main.c
+        src/login_window.c
+        src/register_dialog.c
+        ${BACKEND_SOURCES}
+)
+
+target_link_libraries(doc_embarque_frontend ${GTK3_LIBRARIES})
+
+set_target_properties(doc_embarque_frontend PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
+)
+add_custom_command(TARGET doc_embarque_frontend POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+        ${CMAKE_SOURCE_DIR}/style.css
+        ${CMAKE_BINARY_DIR}/bin/style.css
+)
