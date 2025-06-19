@@ -23,3 +23,23 @@ GtkButton {
 GtkButton:hover {
     background-color: #0056b3;
 }
+
+#entry-with-icon {
+    background: #2e2e2e;
+    border-radius: 6px;
+    border: 1px solid #555;
+    padding: 2px;
+}
+
+#entry-with-icon entry,
+GtkEntry {
+    outline: none;
+    box-shadow: none;
+    background: transparent;
+    border: none;
+}
+
+#icon-button {
+    background: transparent;
+    border: none;
+}
