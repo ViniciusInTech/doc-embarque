@@ -28,8 +28,14 @@ target_link_libraries(doc_embarque_frontend ${GTK3_LIBRARIES})
 set_target_properties(doc_embarque_frontend PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
 )
-add_custom_command(TARGET doc_embarque_frontend POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy
+# Copiar CSS e imagens automaticamente
+add_custom_target(copy_assets ALL
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
         ${CMAKE_SOURCE_DIR}/style.css
         ${CMAKE_BINARY_DIR}/bin/style.css
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_SOURCE_DIR}/assets
+        ${CMAKE_BINARY_DIR}/bin/assets
 )
+
+add_dependencies(doc_embarque_frontend copy_assets)

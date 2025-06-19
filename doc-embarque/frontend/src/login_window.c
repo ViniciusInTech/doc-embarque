@@ -58,45 +58,58 @@ void show_login_window(void) {
     load_css();
     GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_title(GTK_WINDOW(window), "DocEmbarque Login");
-    gtk_window_set_default_size(GTK_WINDOW(window), 320, 220);
     gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
+    gtk_widget_set_size_request(window, 467, 320);
 
-    GtkWidget *box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
-    gtk_widget_set_halign(box, GTK_ALIGN_CENTER);
-    gtk_widget_set_valign(box, GTK_ALIGN_CENTER);
-    gtk_container_add(GTK_CONTAINER(window), box);
+    GtkWidget *main_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+    gtk_container_add(GTK_CONTAINER(window), main_box);
 
-    GtkWidget *frame = gtk_frame_new(NULL);
-    gtk_style_context_add_class(gtk_widget_get_style_context(frame), "login-card");
-    gtk_container_add(GTK_CONTAINER(box), frame);
+    GtkWidget *left_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+    gtk_widget_set_valign(left_box, GTK_ALIGN_CENTER);
+    gtk_widget_set_halign(left_box, GTK_ALIGN_FILL);
+    gtk_widget_set_hexpand(left_box, TRUE);
+    gtk_widget_set_vexpand(left_box, TRUE);
+    gtk_widget_set_size_request(left_box, 187, -1);
 
-    GtkWidget *grid = gtk_grid_new();
-    gtk_container_set_border_width(GTK_CONTAINER(grid), 10);
-    gtk_grid_set_row_spacing(GTK_GRID(grid), 10);
-    gtk_grid_set_column_spacing(GTK_GRID(grid), 10);
-    gtk_container_add(GTK_CONTAINER(frame), grid);
+    GtkWidget *image = gtk_image_new_from_file("assets/login_imagem.svg");
+    gtk_widget_set_size_request(image, 133, 133);
+    gtk_box_pack_start(GTK_BOX(left_box), image, TRUE, TRUE, 0);
+    gtk_box_pack_start(GTK_BOX(main_box), left_box, TRUE, TRUE, 0);
 
-    GtkWidget *title_label = gtk_label_new("DocEmbarque");
+    GtkWidget *form_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 20);
+    gtk_widget_set_valign(form_box, GTK_ALIGN_CENTER);
+    gtk_widget_set_halign(form_box, GTK_ALIGN_FILL);
+    gtk_widget_set_hexpand(form_box, TRUE);
+    gtk_widget_set_vexpand(form_box, TRUE);
+    gtk_widget_set_size_request(form_box, 280, -1);
+    gtk_widget_set_margin_top(form_box, 40);
+    gtk_widget_set_margin_bottom(form_box, 40);
+    gtk_widget_set_margin_start(form_box, 40);
+    gtk_widget_set_margin_end(form_box, 40);
+    gtk_box_pack_start(GTK_BOX(main_box), form_box, TRUE, TRUE, 0);
+
+    GtkWidget *title_label = gtk_label_new("LOGIN");
+    gtk_style_context_add_class(gtk_widget_get_style_context(title_label), "title");
     gtk_widget_set_halign(title_label, GTK_ALIGN_CENTER);
+    gtk_box_pack_start(GTK_BOX(form_box), title_label, FALSE, FALSE, 0);
 
-    GtkWidget *email_label = gtk_label_new("Email:");
     GtkWidget *email_entry = gtk_entry_new();
-    GtkWidget *password_label = gtk_label_new("Senha:");
+    gtk_entry_set_placeholder_text(GTK_ENTRY(email_entry), "Email");
     GtkWidget *password_entry = gtk_entry_new();
+    gtk_entry_set_placeholder_text(GTK_ENTRY(password_entry), "Senha");
     gtk_entry_set_visibility(GTK_ENTRY(password_entry), FALSE);
 
-    GtkWidget *login_button = gtk_button_new_with_label("Login");
-    GtkWidget *register_button = gtk_button_new_with_label("Cadastrar");
+    GtkWidget *login_button = gtk_button_new_with_label("Entrar");
     gtk_widget_set_hexpand(login_button, TRUE);
-    gtk_widget_set_hexpand(register_button, TRUE);
 
-    gtk_grid_attach(GTK_GRID(grid), title_label, 0,0,2,1);
-    gtk_grid_attach(GTK_GRID(grid), email_label, 0,1,1,1);
-    gtk_grid_attach(GTK_GRID(grid), email_entry, 1,1,1,1);
-    gtk_grid_attach(GTK_GRID(grid), password_label, 0,2,1,1);
-    gtk_grid_attach(GTK_GRID(grid), password_entry, 1,2,1,1);
-    gtk_grid_attach(GTK_GRID(grid), login_button, 0,3,2,1);
-    gtk_grid_attach(GTK_GRID(grid), register_button, 0,4,2,1);
+    GtkWidget *signup_label = gtk_label_new("Não tem uma conta?");
+    GtkWidget *register_button = gtk_button_new_with_label("Cadastrar");
+
+    gtk_box_pack_start(GTK_BOX(form_box), email_entry, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(form_box), password_entry, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(form_box), login_button, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(form_box), signup_label, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(form_box), register_button, FALSE, FALSE, 0);
 
     LoginWidgets *widgets = g_malloc(sizeof(LoginWidgets));
     widgets->email_entry = email_entry;
