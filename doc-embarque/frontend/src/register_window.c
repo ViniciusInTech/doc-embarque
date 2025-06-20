@@ -1,5 +1,4 @@
 #include "register_window.h"
-#include "login_window.h"
 #include "../../backend/include/models/user.h"
 #include "../../backend/include/use_cases/create_user.h"
 #include <gtk/gtk.h>
@@ -42,9 +41,7 @@ static void on_save_clicked(GtkButton *button, gpointer user_data) {
 }
 
 static void on_back_clicked(GtkButton *button, gpointer user_data) {
-    GtkWidget *window = gtk_widget_get_toplevel(GTK_WIDGET(button));
-    gtk_widget_hide(window);
-    show_login_window();
+    gtk_stack_set_visible_child_name(GTK_STACK(user_data), "login");
 }
 
 static void on_toggle_password(GtkButton *button, gpointer user_data) {
@@ -70,15 +67,10 @@ static void load_css(void) {
     g_object_unref(provider);
 }
 
-void show_register_window(void) {
+GtkWidget *build_register_ui(GtkWidget *stack) {
     load_css();
-    GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    gtk_window_set_title(GTK_WINDOW(window), "Cadastro de Usuário");
-    gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
-    gtk_window_set_default_size(GTK_WINDOW(window), 470, 380);
 
     GtkWidget *main_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
-    gtk_container_add(GTK_CONTAINER(window), main_box);
 
     GtkWidget *left_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
     gtk_widget_set_size_request(left_box, 188, -1);
@@ -197,8 +189,7 @@ void show_register_window(void) {
     widgets[2] = password_entry;
 
     g_signal_connect(save_button, "clicked", G_CALLBACK(on_save_clicked), widgets);
-    g_signal_connect(back_button, "clicked", G_CALLBACK(on_back_clicked), NULL);
-    g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
+    g_signal_connect(back_button, "clicked", G_CALLBACK(on_back_clicked), stack);
 
-    gtk_widget_show_all(window);
+    return main_box;
 }

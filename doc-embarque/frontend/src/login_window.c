@@ -1,5 +1,4 @@
 #include "login_window.h"
-#include "register_window.h"
 #include "../../backend/include/models/user.h"
 #include "../../backend/include/use_cases/login.h"
 #include <gtk/gtk.h>
@@ -39,18 +38,16 @@ static void on_login_clicked(GtkButton *button, gpointer user_data) {
     }
 }
 
-static void on_register_clicked(GtkButton *button, gpointer user_data) {
-    GtkWidget *window = gtk_widget_get_toplevel(GTK_WIDGET(button));
-    gtk_widget_hide(window);
-    show_register_window();
-}
-
 static void on_toggle_password(GtkButton *button, gpointer user_data) {
     PasswordToggle *toggle = user_data;
     toggle->visible = !toggle->visible;
     gtk_entry_set_visibility(GTK_ENTRY(toggle->entry), toggle->visible);
     gtk_image_set_from_pixbuf(toggle->icon,
                               toggle->visible ? toggle->lock_open : toggle->lock_closed);
+}
+
+static void switch_to_register(GtkButton *button, gpointer user_data) {
+    gtk_stack_set_visible_child_name(GTK_STACK(user_data), "register");
 }
 
 static void load_css(void) {
@@ -68,15 +65,10 @@ static void load_css(void) {
     g_object_unref(provider);
 }
 
-void show_login_window(void) {
+GtkWidget *build_login_ui(GtkWidget *stack) {
     load_css();
-    GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    gtk_window_set_title(GTK_WINDOW(window), "DocEmbarque Login");
-    gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
-    gtk_window_set_default_size(GTK_WINDOW(window), 470, 320);
 
     GtkWidget *main_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
-    gtk_container_add(GTK_CONTAINER(window), main_box);
 
     GtkWidget *left_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
     gtk_widget_set_size_request(left_box, 188, -1);
@@ -103,16 +95,16 @@ void show_login_window(void) {
     gtk_widget_set_halign(title_label, GTK_ALIGN_CENTER);
     gtk_grid_attach(GTK_GRID(form_grid), title_label, 0, 0, 2, 1);
 
+    GdkPixbuf *email_pixbuf = gdk_pixbuf_new_from_file_at_scale("assets/email.svg", 16, 16, TRUE, NULL);
     GtkWidget *email_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
     gtk_widget_set_name(email_box, "entry-with-icon");
     gtk_widget_set_halign(email_box, GTK_ALIGN_FILL);
     gtk_widget_set_hexpand(email_box, TRUE);
 
-    GdkPixbuf *user_pixbuf = gdk_pixbuf_new_from_file_at_scale("assets/email.svg", 16, 16, TRUE, NULL);
-    GtkWidget *user_icon = gtk_image_new_from_pixbuf(user_pixbuf);
-    gtk_widget_set_margin_start(user_icon, 8);
-    gtk_widget_set_margin_end(user_icon, 4);
-    gtk_widget_set_valign(user_icon, GTK_ALIGN_CENTER);
+    GtkWidget *email_icon = gtk_image_new_from_pixbuf(email_pixbuf);
+    gtk_widget_set_margin_start(email_icon, 8);
+    gtk_widget_set_margin_end(email_icon, 4);
+    gtk_widget_set_valign(email_icon, GTK_ALIGN_CENTER);
 
     GtkWidget *email_entry = gtk_entry_new();
     gtk_entry_set_placeholder_text(GTK_ENTRY(email_entry), "Email");
@@ -125,7 +117,7 @@ void show_login_window(void) {
     gtk_widget_set_name(email_spacer, "icon-button");
     gtk_widget_set_size_request(email_spacer, 24, 24);
 
-    gtk_box_pack_start(GTK_BOX(email_box), user_icon, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(email_box), email_icon, FALSE, FALSE, 0);
     gtk_box_pack_start(GTK_BOX(email_box), email_entry, TRUE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(email_box), email_spacer, FALSE, FALSE, 0);
     gtk_grid_attach(GTK_GRID(form_grid), email_box, 0, 1, 2, 1);
@@ -183,8 +175,7 @@ void show_login_window(void) {
     widgets[1] = password_entry;
 
     g_signal_connect(login_button, "clicked", G_CALLBACK(on_login_clicked), widgets);
-    g_signal_connect(register_button, "clicked", G_CALLBACK(on_register_clicked), NULL);
-    g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
+    g_signal_connect(register_button, "clicked", G_CALLBACK(switch_to_register), stack);
 
-    gtk_widget_show_all(window);
+    return main_box;
 }
