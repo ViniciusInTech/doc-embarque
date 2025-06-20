@@ -3,5 +3,6 @@
 #include <gtk/gtk.h>
 
 GtkWidget *build_register_ui(GtkWidget *stack);
+void clear_register_form();
 
 #endif

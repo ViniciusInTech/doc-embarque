@@ -13,6 +13,10 @@ typedef struct {
     gboolean visible;
 } PasswordToggle;
 
+static GtkWidget *name_entry;
+static GtkWidget *email_entry;
+static GtkWidget *password_entry;
+
 static void show_message(GtkWindow *parent, const char *message) {
     GtkWidget *dialog = gtk_message_dialog_new(parent,
                                                GTK_DIALOG_MODAL,
@@ -23,24 +27,33 @@ static void show_message(GtkWindow *parent, const char *message) {
     gtk_widget_destroy(dialog);
 }
 
+void clear_register_form(void) {
+    if (name_entry) gtk_entry_set_text(GTK_ENTRY(name_entry), "");
+    if (email_entry) gtk_entry_set_text(GTK_ENTRY(email_entry), "");
+    if (password_entry) gtk_entry_set_text(GTK_ENTRY(password_entry), "");
+}
+
 static void on_save_clicked(GtkButton *button, gpointer user_data) {
-    GtkWidget **w = user_data;
     User u;
-    g_strlcpy(u.name, gtk_entry_get_text(GTK_ENTRY(w[0])), sizeof(u.name));
-    g_strlcpy(u.email, gtk_entry_get_text(GTK_ENTRY(w[1])), sizeof(u.email));
-    g_strlcpy(u.password, gtk_entry_get_text(GTK_ENTRY(w[2])), sizeof(u.password));
+    g_strlcpy(u.name, gtk_entry_get_text(GTK_ENTRY(name_entry)), sizeof(u.name));
+    g_strlcpy(u.email, gtk_entry_get_text(GTK_ENTRY(email_entry)), sizeof(u.email));
+    g_strlcpy(u.password, gtk_entry_get_text(GTK_ENTRY(password_entry)), sizeof(u.password));
     strcpy(u.role, "ADMIN");
     u = create_user(u);
+
     if (u.id != -1) {
         char msg[256];
         snprintf(msg, sizeof(msg), "Usuário %s cadastrado!", u.name);
         show_message(GTK_WINDOW(gtk_widget_get_toplevel(GTK_WIDGET(button))), msg);
+        clear_register_form();
     } else {
         show_message(GTK_WINDOW(gtk_widget_get_toplevel(GTK_WIDGET(button))), "Erro ao cadastrar usuário");
+        clear_register_form();
     }
 }
 
 static void on_back_clicked(GtkButton *button, gpointer user_data) {
+    clear_register_form();
     gtk_stack_set_visible_child_name(GTK_STACK(user_data), "login");
 }
 
@@ -69,6 +82,7 @@ static void load_css(void) {
 
 GtkWidget *build_register_ui(GtkWidget *stack) {
     load_css();
+    clear_register_form();
 
     GtkWidget *main_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 
@@ -108,7 +122,7 @@ GtkWidget *build_register_ui(GtkWidget *stack) {
     gtk_widget_set_margin_start(name_icon, 8);
     gtk_widget_set_margin_end(name_icon, 4);
     gtk_widget_set_valign(name_icon, GTK_ALIGN_CENTER);
-    GtkWidget *name_entry = gtk_entry_new();
+    name_entry = gtk_entry_new();
     gtk_entry_set_placeholder_text(GTK_ENTRY(name_entry), "Nome");
     gtk_widget_set_valign(name_entry, GTK_ALIGN_CENTER);
     gtk_widget_set_hexpand(name_entry, TRUE);
@@ -130,7 +144,7 @@ GtkWidget *build_register_ui(GtkWidget *stack) {
     gtk_widget_set_margin_start(email_icon, 8);
     gtk_widget_set_margin_end(email_icon, 4);
     gtk_widget_set_valign(email_icon, GTK_ALIGN_CENTER);
-    GtkWidget *email_entry = gtk_entry_new();
+    email_entry = gtk_entry_new();
     gtk_entry_set_placeholder_text(GTK_ENTRY(email_entry), "Email");
     gtk_widget_set_valign(email_entry, GTK_ALIGN_CENTER);
     gtk_widget_set_hexpand(email_entry, TRUE);
@@ -148,7 +162,7 @@ GtkWidget *build_register_ui(GtkWidget *stack) {
     gtk_widget_set_name(password_box, "entry-with-icon");
     gtk_widget_set_halign(password_box, GTK_ALIGN_FILL);
     gtk_widget_set_hexpand(password_box, TRUE);
-    GtkWidget *password_entry = gtk_entry_new();
+    password_entry = gtk_entry_new();
     gtk_entry_set_placeholder_text(GTK_ENTRY(password_entry), "Senha");
     gtk_entry_set_visibility(GTK_ENTRY(password_entry), FALSE);
     gtk_widget_set_valign(password_entry, GTK_ALIGN_CENTER);
@@ -183,12 +197,7 @@ GtkWidget *build_register_ui(GtkWidget *stack) {
     gtk_widget_set_hexpand(back_button, TRUE);
     gtk_grid_attach(GTK_GRID(form_grid), back_button, 0, 5, 2, 1);
 
-    GtkWidget **widgets = g_malloc(sizeof(GtkWidget *) * 3);
-    widgets[0] = name_entry;
-    widgets[1] = email_entry;
-    widgets[2] = password_entry;
-
-    g_signal_connect(save_button, "clicked", G_CALLBACK(on_save_clicked), widgets);
+    g_signal_connect(save_button, "clicked", G_CALLBACK(on_save_clicked), NULL);
     g_signal_connect(back_button, "clicked", G_CALLBACK(on_back_clicked), stack);
 
     return main_box;

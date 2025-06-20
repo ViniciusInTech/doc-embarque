@@ -13,6 +13,10 @@ typedef struct {
     gboolean visible;
 } PasswordToggle;
 
+static GtkWidget *email_entry;
+static GtkWidget *password_entry;
+
+
 static void show_message(GtkWindow *parent, const char *message) {
     GtkWidget *dialog = gtk_message_dialog_new(parent,
                                                GTK_DIALOG_MODAL,
@@ -22,6 +26,12 @@ static void show_message(GtkWindow *parent, const char *message) {
     gtk_dialog_run(GTK_DIALOG(dialog));
     gtk_widget_destroy(dialog);
 }
+
+void clear_login_form(void) {
+    if (email_entry) gtk_entry_set_text(GTK_ENTRY(email_entry), "");
+    if (password_entry) gtk_entry_set_text(GTK_ENTRY(password_entry), "");
+}
+
 
 static void on_login_clicked(GtkButton *button, gpointer user_data) {
     GtkWidget **w = user_data;
@@ -47,6 +57,7 @@ static void on_toggle_password(GtkButton *button, gpointer user_data) {
 }
 
 static void switch_to_register(GtkButton *button, gpointer user_data) {
+    clear_login_form();
     gtk_stack_set_visible_child_name(GTK_STACK(user_data), "register");
 }
 
@@ -106,7 +117,7 @@ GtkWidget *build_login_ui(GtkWidget *stack) {
     gtk_widget_set_margin_end(email_icon, 4);
     gtk_widget_set_valign(email_icon, GTK_ALIGN_CENTER);
 
-    GtkWidget *email_entry = gtk_entry_new();
+    email_entry = gtk_entry_new();
     gtk_entry_set_placeholder_text(GTK_ENTRY(email_entry), "Email");
     gtk_widget_set_valign(email_entry, GTK_ALIGN_CENTER);
     gtk_widget_set_hexpand(email_entry, TRUE);
@@ -127,7 +138,7 @@ GtkWidget *build_login_ui(GtkWidget *stack) {
     gtk_widget_set_halign(password_box, GTK_ALIGN_FILL);
     gtk_widget_set_hexpand(password_box, TRUE);
 
-    GtkWidget *password_entry = gtk_entry_new();
+    password_entry = gtk_entry_new();
     gtk_entry_set_placeholder_text(GTK_ENTRY(password_entry), "Senha");
     gtk_entry_set_visibility(GTK_ENTRY(password_entry), FALSE);
     gtk_widget_set_valign(password_entry, GTK_ALIGN_CENTER);
