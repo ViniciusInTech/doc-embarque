@@ -19,7 +19,7 @@ set(BACKEND_SOURCES
 add_executable(doc_embarque_frontend
         src/main.c
         src/login_window.c
-        src/register_dialog.c
+        src/register_window.c
         ${BACKEND_SOURCES}
 )
 
