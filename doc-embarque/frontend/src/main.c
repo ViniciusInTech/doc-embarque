@@ -1,6 +1,7 @@
 #include <gtk/gtk.h>
 #include "login_window.h"
 #include "register_window.h"
+#include "home_window.h"
 
 int main(int argc, char *argv[]) {
     gtk_init(&argc, &argv);
@@ -17,9 +18,11 @@ int main(int argc, char *argv[]) {
 
     GtkWidget *login_ui = build_login_ui(stack);
     GtkWidget *register_ui = build_register_ui(stack);
+    GtkWidget *home_ui = build_home_ui(stack);
 
     gtk_stack_add_named(GTK_STACK(stack), login_ui, "login");
     gtk_stack_add_named(GTK_STACK(stack), register_ui, "register");
+    gtk_stack_add_named(GTK_STACK(stack), home_ui, "home");
     gtk_stack_set_visible_child_name(GTK_STACK(stack), "login");
 
     g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);

@@ -13,6 +13,12 @@ typedef struct {
     gboolean visible;
 } PasswordToggle;
 
+typedef struct {
+    GtkWidget *email_entry;
+    GtkWidget *password_entry;
+    GtkWidget *stack;
+} LoginContext;
+
 static GtkWidget *email_entry;
 static GtkWidget *password_entry;
 
@@ -34,15 +40,13 @@ void clear_login_form(void) {
 
 
 static void on_login_clicked(GtkButton *button, gpointer user_data) {
-    GtkWidget **w = user_data;
-    const char *email = gtk_entry_get_text(GTK_ENTRY(w[0]));
-    const char *password = gtk_entry_get_text(GTK_ENTRY(w[1]));
+    LoginContext *ctx = user_data;
+    const char *email = gtk_entry_get_text(GTK_ENTRY(ctx->email_entry));
+    const char *password = gtk_entry_get_text(GTK_ENTRY(ctx->password_entry));
 
     User logged;
     if (login(email, password, &logged)) {
-        char msg[256];
-        snprintf(msg, sizeof(msg), "Bem-vindo, %s!", logged.name);
-        show_message(GTK_WINDOW(gtk_widget_get_toplevel(GTK_WIDGET(button))), msg);
+        gtk_stack_set_visible_child_name(GTK_STACK(ctx->stack), "home");
     } else {
         show_message(GTK_WINDOW(gtk_widget_get_toplevel(GTK_WIDGET(button))), "Falha no login");
     }
@@ -181,11 +185,12 @@ GtkWidget *build_login_ui(GtkWidget *stack) {
     gtk_widget_set_hexpand(register_button, TRUE);
     gtk_grid_attach(GTK_GRID(form_grid), register_button, 0, 5, 2, 1);
 
-    GtkWidget **widgets = g_malloc(sizeof(GtkWidget *) * 2);
-    widgets[0] = email_entry;
-    widgets[1] = password_entry;
+    LoginContext *ctx = g_malloc(sizeof(LoginContext));
+    ctx->email_entry = email_entry;
+    ctx->password_entry = password_entry;
+    ctx->stack = stack;
 
-    g_signal_connect(login_button, "clicked", G_CALLBACK(on_login_clicked), widgets);
+    g_signal_connect(login_button, "clicked", G_CALLBACK(on_login_clicked), ctx);
     g_signal_connect(register_button, "clicked", G_CALLBACK(switch_to_register), stack);
 
     return main_box;

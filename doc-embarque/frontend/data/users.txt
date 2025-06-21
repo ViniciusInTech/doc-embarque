@@ -1,3 +1,1 @@
 1;vini;vini@gmail.com;123456;ADMIN
-2;bruno da silva;bruno@gmail.com;bruno123;ADMIN
-3;maria da silva;maria@gmail.com;maria123;ADMIN
