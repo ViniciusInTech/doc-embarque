@@ -21,6 +21,8 @@ add_executable(doc_embarque_frontend
         src/login_window.c
         src/register_window.c
         src/home_window.c
+        src/dashboard_page.c
+        src/schools_page.c
         ${BACKEND_SOURCES}
 )
 

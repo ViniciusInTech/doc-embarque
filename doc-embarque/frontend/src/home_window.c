@@ -1,10 +1,18 @@
 #include "home_window.h"
+#include "dashboard_page.h"
+#include "schools_page.h"
 #include <gtk/gtk.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
 static void on_logout_clicked(GtkButton *button, gpointer user_data) {
     GtkWidget *stack = GTK_WIDGET(user_data);
     gtk_stack_set_visible_child_name(GTK_STACK(stack), "login");
+}
+
+static void on_navigate_clicked(GtkButton *btn, gpointer user_data) {
+    GtkStack *cstack = GTK_STACK(user_data);
+    const char *page = g_object_get_data(G_OBJECT(btn), "target-page");
+    gtk_stack_set_visible_child_name(cstack, page);
 }
 
 static void load_css(void) {
@@ -60,7 +68,6 @@ static GtkWidget *create_menu_button(const char *label_text, const char *icon_pa
     return button;
 }
 
-
 GtkWidget *build_home_ui(GtkWidget *stack) {
     load_css();
 
@@ -69,50 +76,44 @@ GtkWidget *build_home_ui(GtkWidget *stack) {
     GtkWidget *sidebar = gtk_box_new(GTK_ORIENTATION_VERTICAL, 6);
     gtk_widget_set_size_request(sidebar, 200, -1);
     gtk_style_context_add_class(gtk_widget_get_style_context(sidebar), "sidebar");
-    gtk_widget_set_valign(sidebar, GTK_ALIGN_FILL);
-    gtk_widget_set_halign(sidebar, GTK_ALIGN_FILL);
 
-    const char *menu_items[][2] = {
-        {"Dashboard", "assets/dashboard.svg"},
-        {"Alunos", "assets/students.svg"},
-        {"Escolas", "assets/home.svg"},
-        {"Turmas", "assets/classes.svg"},
-        {"Embarques", "assets/boarding.svg"},
-        {"Contatos", "assets/contacts.svg"},
-        {"Pagamentos", "assets/payment.svg"},
-        {"Seguro Viagem", "assets/insurance.svg"},
-        {"Sair", "assets/logout.svg"}
+    GtkWidget *content_stack = gtk_stack_new();
+    gtk_stack_set_transition_type(GTK_STACK(content_stack), GTK_STACK_TRANSITION_TYPE_SLIDE_LEFT_RIGHT);
+    gtk_widget_set_vexpand(content_stack, TRUE);
+    gtk_widget_set_hexpand(content_stack, TRUE);
+
+    GtkWidget *dashboard_page = build_dashboard_ui();
+    GtkWidget *schools_page = build_schools_ui();
+
+    gtk_stack_add_named(GTK_STACK(content_stack), dashboard_page, "dashboard");
+    gtk_stack_add_named(GTK_STACK(content_stack), schools_page, "schools");
+
+    const struct {
+        const char *label;
+        const char *icon;
+        const char *page;
+    } menu_items[] = {
+        {"Dashboard", "assets/dashboard.svg", "dashboard"},
+        {"Escolas", "assets/home.svg", "schools"},
+        {"Sair", "assets/logout.svg", "login"},
     };
 
-    int num_items = sizeof(menu_items) / sizeof(menu_items[0]);
-    for (int i = 0; i < num_items; i++) {
-        GtkWidget *btn = create_menu_button(menu_items[i][0], menu_items[i][1]);
-        gtk_box_pack_start(GTK_BOX(sidebar), btn, FALSE, FALSE, 0);
+    for (int i = 0; i < 3; i++) {
+        GtkWidget *btn = create_menu_button(menu_items[i].label, menu_items[i].icon);
 
-        if (g_strcmp0(menu_items[i][0], "Sair") == 0) {
+        if (g_strcmp0(menu_items[i].label, "Sair") == 0) {
+            gtk_widget_set_name(btn, "menu-button logout");
             g_signal_connect(btn, "clicked", G_CALLBACK(on_logout_clicked), stack);
+        } else {
+            g_signal_connect(btn, "clicked", G_CALLBACK(on_navigate_clicked), content_stack);
+            g_object_set_data(G_OBJECT(btn), "target-page", (gpointer)menu_items[i].page);
         }
+
+        gtk_box_pack_start(GTK_BOX(sidebar), btn, FALSE, FALSE, 0);
     }
 
-    GtkWidget *content_area = gtk_box_new(GTK_ORIENTATION_VERTICAL, 20);
-    gtk_widget_set_valign(content_area, GTK_ALIGN_FILL);
-    gtk_widget_set_halign(content_area, GTK_ALIGN_FILL);
-    gtk_widget_set_margin_top(content_area, 30);
-    gtk_widget_set_margin_bottom(content_area, 30);
-    gtk_widget_set_margin_start(content_area, 30);
-    gtk_widget_set_margin_end(content_area, 30);
-
-    GtkWidget *title = gtk_label_new("DocEmbarque");
-    gtk_style_context_add_class(gtk_widget_get_style_context(title), "title");
-    gtk_widget_set_halign(title, GTK_ALIGN_START);
-    gtk_box_pack_start(GTK_BOX(content_area), title, FALSE, FALSE, 0);
-
-    GtkWidget *subtitle = gtk_label_new("Bem-vindo ao DocEmbarque\nGerencie excursões escolares com facilidade.");
-    gtk_widget_set_halign(subtitle, GTK_ALIGN_START);
-    gtk_box_pack_start(GTK_BOX(content_area), subtitle, FALSE, FALSE, 0);
-
     gtk_box_pack_start(GTK_BOX(main_container), sidebar, FALSE, FALSE, 0);
-    gtk_box_pack_start(GTK_BOX(main_container), content_area, TRUE, TRUE, 0);
+    gtk_box_pack_start(GTK_BOX(main_container), content_stack, TRUE, TRUE, 0);
 
     return main_container;
 }
