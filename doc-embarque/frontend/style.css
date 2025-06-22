@@ -1,33 +1,54 @@
+window {
+    background-color: #2B2B2B;
+}
+
+.sidebar {
+    background-color: #1E3A8A;
+}
+
 .title {
     font-size: 22px;
     font-weight: bold;
     margin-bottom: 16px;
     font-family: "Segoe UI", sans-serif;
+    color: #3B5DC9;
+}
+
+label {
+    color: #E0E0E0;
+    font-size: 14px;
 }
 
 GtkEntry {
     padding: 10px;
     font-size: 14px;
     border-radius: 8px;
-    border: 1px solid #ccc;
-    background: #f4f4f4;
+    border: 1px solid #3B4FBF;
+    background: #3A3A3A;
+    color: #E0E0E0;
 }
 
-GtkButton {
-    background-color: #007bff;
+GtkButton,
+GtkButton:focus,
+GtkButton:hover,
+GtkButton:active {
+    background-color: #1E3A8A;
     color: white;
     border-radius: 8px;
     padding: 8px 16px;
+    border: none;
+    outline: none;
+    box-shadow: none;
+    background-clip: padding-box;
 }
 
 GtkButton:hover {
-    background-color: #0056b3;
+    background-color: #263FA0;
 }
 
 #entry-with-icon {
-    background: #2e2e2e;
+    background: #3A3A3A;
     border-radius: 6px;
-    border: 1px solid #555;
     padding: 2px;
 }
 
@@ -39,7 +60,33 @@ GtkEntry {
     border: none;
 }
 
-#icon-button {
+#icon-button,
+#icon-button:focus,
+#icon-button:hover,
+#icon-button:active {
     background: transparent;
     border: none;
+    box-shadow: none;
+    outline: none;
+}
+
+#menu-button,
+#menu-button:focus,
+#menu-button:hover,
+#menu-button:active {
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+    padding: 8px;
+    color: white;
+    font-weight: bold;
+}
+
+#menu-button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+#menu-button.logout {
+    background-color: #FBB905;
+    color: #000000;
 }

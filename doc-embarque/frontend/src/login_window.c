@@ -122,7 +122,7 @@ GtkWidget *build_login_ui(GtkWidget *stack) {
     gtk_widget_set_valign(email_icon, GTK_ALIGN_CENTER);
 
     email_entry = gtk_entry_new();
-    gtk_entry_set_placeholder_text(GTK_ENTRY(email_entry), "Email");
+    gtk_entry_set_placeholder_text(GTK_ENTRY(email_entry), "     Email");
     gtk_widget_set_valign(email_entry, GTK_ALIGN_CENTER);
     gtk_widget_set_hexpand(email_entry, TRUE);
     gtk_entry_set_has_frame(GTK_ENTRY(email_entry), FALSE);

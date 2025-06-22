@@ -1,1 +1,2 @@
-1;vini;vini@gmail.com;123456;ADMIN
+1;vini;vini@gmail.com;123456;ADMIN;
+2;carlos teste;viniteste@gmail.com;123456789;ADMIN

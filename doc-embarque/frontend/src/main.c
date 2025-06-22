@@ -5,6 +5,8 @@
 
 int main(int argc, char *argv[]) {
     gtk_init(&argc, &argv);
+    GtkSettings *settings = gtk_settings_get_default();
+    g_object_set(settings, "gtk-application-prefer-dark-theme", TRUE, NULL);
 
     GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_title(GTK_WINDOW(window), "DocEmbarque");
