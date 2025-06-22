@@ -2,6 +2,7 @@
 #include "../../backend/include/models/user.h"
 #include "../../backend/include/use_cases/login.h"
 #include <gtk/gtk.h>
+#include "session.h"
 #include <gdk-pixbuf/gdk-pixbuf.h>
 #include <string.h>
 
@@ -46,6 +47,7 @@ static void on_login_clicked(GtkButton *button, gpointer user_data) {
 
     User logged;
     if (login(email, password, &logged)) {
+        set_current_user(logged);
         gtk_stack_set_visible_child_name(GTK_STACK(ctx->stack), "home");
     } else {
         show_message(GTK_WINDOW(gtk_widget_get_toplevel(GTK_WIDGET(button))), "Falha no login");

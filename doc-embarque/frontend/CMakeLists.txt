@@ -13,6 +13,7 @@ add_definitions(${GTK3_CFLAGS_OTHER})
 set(BACKEND_SOURCES
         ../backend/src/use_cases/create_user.c
         ../backend/src/use_cases/login.c
+        ../backend/src/use_cases/create_school.c
         ../backend/src/utils.c
 )
 
@@ -23,6 +24,7 @@ add_executable(doc_embarque_frontend
         src/home_window.c
         src/dashboard_page.c
         src/schools_page.c
+        src/session.c
         ${BACKEND_SOURCES}
 )
 
