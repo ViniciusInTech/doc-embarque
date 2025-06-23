@@ -14,6 +14,9 @@ set(BACKEND_SOURCES
         ../backend/src/use_cases/create_user.c
         ../backend/src/use_cases/login.c
         ../backend/src/use_cases/create_school.c
+        ../backend/src/use_cases/read_school.c
+        ../backend/src/use_cases/update_school.c
+        ../backend/src/use_cases/delete_school.c
         ../backend/src/utils.c
 )
 

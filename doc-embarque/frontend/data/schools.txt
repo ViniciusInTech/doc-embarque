@@ -1,2 +1,0 @@
-1;1;escola teste da silva;rua dos santos 
-2;1;souza leão;rua da alegria

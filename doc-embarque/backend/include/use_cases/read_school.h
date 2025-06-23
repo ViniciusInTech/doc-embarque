@@ -4,5 +4,6 @@
 #include "../models/school.h"
 
 void read_schools();
+int load_schools(School **schools);
 
 #endif
