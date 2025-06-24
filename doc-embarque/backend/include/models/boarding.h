@@ -3,9 +3,9 @@
 
 typedef struct {
     int id;
-    int student_id;
-    char date[20];
-    int boarded;
+    int class_id;
+    char student_name[100];
+    char student_rg[20];
 } Boarding;
 
 #endif

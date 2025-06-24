@@ -5,16 +5,19 @@
 #include "../../include/models/student.h"
 #include "../../include/use_cases/create_travel_insurance.h"
 #include "../../include/utils.h"
+#include "../../include/models/class.h"
+#include "../../include/use_cases/count_students.h"
 
 #define FILE_PATH "../../data/travel_insurance.txt"
 #define STUDENT_FILE "../../data/students.txt"
+#define CLASS_FILE "../../data/class.txt"
 
 int get_next_travel_insurance_id() {
     FILE *file = fopen(FILE_PATH, "r");
     int id = 0, temp;
     TravelInsurance t;
     if (file != NULL) {
-        while (fscanf(file, "%d;%d;%[^;];%[^\n]\n", &temp, &t.student_id, t.policy_number, t.provider) == 4) {
+        while (fscanf(file, "%d;%d;%[^;];%[^;];%[^;];%s\n", &temp, &t.class_id, t.student_name, t.student_rg, t.student_cpf, t.student_bdate) == 6) {
             if (temp > id) id = temp;
         }
         fclose(file);
@@ -22,11 +25,11 @@ int get_next_travel_insurance_id() {
     return id + 1;
 }
 
-int verify_student_insurance(int id) {
-    FILE *file = fopen(STUDENT_FILE, "r");
-    Student s; int temp; int found = 0;
+int verify_class_insurance(int id) {
+    FILE *file = fopen(CLASS_FILE, "r");
+    Class c; int temp; int found = 0;
     if (file != NULL) {
-        while (fscanf(file, "%d;%d;%[^;];%[^;];%[^;];%[^\n]\n", &temp, &s.classroom_id, s.name, s.rg, s.cpf, s.birth_date) == 6) {
+        while (fscanf(file, "%d;%d;%[^;];%d;%d\n", &temp, &c.school_id, c.name, &c.students, &c.confirmed_students) == 5) {
             if (temp == id) { found = 1; break; }
         }
         fclose(file);
@@ -34,40 +37,67 @@ int verify_student_insurance(int id) {
     return found;
 }
 
-TravelInsurance save_travel_insurance(TravelInsurance t) {
+TravelInsurance save_travel_insurance(int cols, TravelInsurance t[1][cols]) {
     ensure_data_directory();
     FILE *file = fopen(FILE_PATH, "a");
     if (!file) {
         perror("Erro ao abrir o arquivo");
-        return t;
+        return t[0][0];
     }
-    fprintf(file, "%d;%d;%s;%s\n", t.id, t.student_id, t.policy_number, t.provider);
+    int i;
+    for (i = 0; i < cols; i++) {
+        fprintf(file, "%d;%d;%s;%s;%s;%s\n", t[0][i].id, t[0][i].class_id, t[0][i].student_name, t[0][i].student_rg, t[0][i].student_cpf, t[0][i].student_bdate);
+    }
     fclose(file);
-    return t;
+    return t[0][0];
 }
 
-TravelInsurance create_travel_insurance(TravelInsurance t) {
-    t.id = get_next_travel_insurance_id();
-    return save_travel_insurance(t);
+TravelInsurance create_travel_insurance(int cols, TravelInsurance t[1][cols]) {
+    int i;
+    for (i = 0; i < cols; i++) {
+        t[0][i].id = get_next_travel_insurance_id();
+    }
+    return save_travel_insurance(cols, t);
 }
 
 TravelInsurance create_travel_insurance_cli() {
     TravelInsurance t;
-    printf("ID do aluno: ");
-    scanf("%d", &t.student_id);
+    int class_id;
+    printf("ID da turma: ");
+    scanf("%d", &class_id);
     getchar();
-    if (!verify_student_insurance(t.student_id)) {
-        printf("Aluno com ID %d não encontrado.\n", t.student_id);
-        t.id = -1;
+    if (!verify_class_insurance(class_id)) {
+        printf("Turma com ID %d não encontrada.\n", class_id);
+        class_id = -1;
         return t;
     }
-    printf("Numero da apolice: ");
-    fgets(t.policy_number, sizeof(t.policy_number), stdin);
-    strtok(t.policy_number, "\n");
-    printf("Seguradora: ");
-    fgets(t.provider, sizeof(t.provider), stdin);
-    strtok(t.provider, "\n");
-    t = create_travel_insurance(t);
-    if (t.id != -1) printf("Seguro salvo com sucesso.\n");
-    return t;
+
+    int cs = count_students(class_id);
+    TravelInsurance t1[1][cs];
+    int c;
+    for (c = 0; c < cs; c++) {
+        t1[0][c].class_id = class_id;
+    }
+
+    FILE *file = fopen(STUDENT_FILE, "r");
+    if (!file) {
+        perror("Erro ao abrir o arquivo\n");
+        return t;
+    }
+
+    int temp, i = 0;
+    Student s;
+    while (fscanf(file, "%d;%d;%[^;];%[^;];%[^;];%s\n", &s.id, &temp, s.name, s.rg, s.cpf, s.birth_date) == 6) {
+        if (temp == class_id) {
+            strcpy(t1[0][i].student_name, s.name);
+            strcpy(t1[0][i].student_rg, s.rg);
+            strcpy(t1[0][i].student_cpf, s.cpf);
+            strcpy(t1[0][i].student_bdate, s.birth_date);
+            i ++;
+        }
+    }
+
+    fclose(file);
+    if (class_id != -1) printf("Seguro Viagem salvo com sucesso.\n");
+    return create_travel_insurance(cs, t1);
 }

@@ -1,1 +1,2 @@
 1;admin;admin@gmail.com;admin;ADMIN
+2;adm;adm1@gmail.com;123;ADMIN

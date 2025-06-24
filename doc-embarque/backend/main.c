@@ -41,14 +41,11 @@
 #include "include/use_cases/update_installment.h"
 #include "include/use_cases/delete_installment.h"
 #include "include/use_cases/create_boarding.h"
-#include "include/use_cases/read_boarding.h"
-#include "include/use_cases/update_boarding.h"
 #include "include/use_cases/delete_boarding.h"
 #include "include/use_cases/create_travel_insurance.h"
-#include "include/use_cases/read_travel_insurance.h"
-#include "include/use_cases/update_travel_insurance.h"
 #include "include/use_cases/delete_travel_insurance.h"
 #include "include/use_cases/read_user.h"
+
 
 static void print_menu() {
     printf("\n== DocEmbarque Teste ==\n");
@@ -82,13 +79,10 @@ static void print_menu() {
     printf("28 - Atualizar parcela\n");
     printf("29 - Remover parcela\n");
     printf("30 - Registrar embarque\n");
-    printf("31 - Listar embarques\n");
-    printf("32 - Atualizar embarque\n");
     printf("33 - Remover embarque\n");
     printf("34 - Criar seguro viagem\n");
-    printf("35 - Listar seguros\n");
-    printf("36 - Atualizar seguro\n");
     printf("37 - Remover seguro\n");
+    printf("38 - Planilha embarque\n");
     printf("0 - Sair\n> ");
 }
 
@@ -385,31 +379,6 @@ int main() {
                     printf("Embarque registrado com ID %d.\n", b.id);
                 break;
             }
-            case 31:
-                read_boardings();
-                break;
-            case 32: {
-                Boarding b;
-                char buffer[128];
-                printf("ID do embarque: ");
-                fgets(buffer, sizeof(buffer), stdin);
-                b.id = atoi(buffer);
-                printf("ID do aluno (0 para manter): ");
-                fgets(buffer, sizeof(buffer), stdin);
-                b.student_id = atoi(buffer);
-                printf("Data (deixe vazio para manter): ");
-                fgets(b.date, sizeof(b.date), stdin);
-                b.date[strcspn(b.date, "\n")] = '\0';
-                printf("Embarcou (0/1 ou -1 para manter): ");
-                fgets(buffer, sizeof(buffer), stdin);
-                b.boarded = atoi(buffer);
-                if (b.boarded != 0 && b.boarded != 1) b.boarded = -1;
-                if (update_boarding(b))
-                    printf("Embarque atualizado.\n");
-                else
-                    printf("Embarque não encontrado.\n");
-                break;
-            }
             case 33: {
                 char buf[32];
                 printf("ID do embarque a remover: ");
@@ -424,30 +393,6 @@ int main() {
                 TravelInsurance t = create_travel_insurance_cli();
                 if (t.id != -1)
                     printf("Seguro criado com ID %d.\n", t.id);
-                break;
-            }
-            case 35:
-                read_travel_insurances();
-                break;
-            case 36: {
-                TravelInsurance t;
-                char buffer[128];
-                printf("ID do seguro: ");
-                fgets(buffer, sizeof(buffer), stdin);
-                t.id = atoi(buffer);
-                printf("ID do aluno (0 para manter): ");
-                fgets(buffer, sizeof(buffer), stdin);
-                t.student_id = atoi(buffer);
-                printf("Numero da apolice (deixe vazio para manter): ");
-                fgets(t.policy_number, sizeof(t.policy_number), stdin);
-                t.policy_number[strcspn(t.policy_number, "\n")] = '\0';
-                printf("Seguradora (deixe vazio para manter): ");
-                fgets(t.provider, sizeof(t.provider), stdin);
-                t.provider[strcspn(t.provider, "\n")] = '\0';
-                if (update_travel_insurance(t))
-                    printf("Seguro atualizado.\n");
-                else
-                    printf("Seguro não encontrado.\n");
                 break;
             }
             case 37: {

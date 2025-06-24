@@ -3,10 +3,11 @@
 
 #include "../models/boarding.h"
 
-Boarding create_boarding(Boarding b);
+Boarding create_boarding(int cols, Boarding b[1][cols]);
 Boarding create_boarding_cli();
 int get_next_boarding_id();
-Boarding save_boarding(Boarding b);
-int verify_student_board(int id);
+Boarding save_boarding(int cols, Boarding b[1][cols]);
+int verify_class_board(int id);
+int count_students(int class_id);
 
 #endif

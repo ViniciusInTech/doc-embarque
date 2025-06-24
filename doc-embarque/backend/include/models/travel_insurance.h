@@ -3,9 +3,11 @@
 
 typedef struct {
     int id;
-    int student_id;
-    char policy_number[50];
-    char provider[50];
+    int class_id;
+    char student_name[100];
+    char student_rg[20];
+    char student_cpf[20];
+    char student_bdate[20];
 } TravelInsurance;
 
 #endif

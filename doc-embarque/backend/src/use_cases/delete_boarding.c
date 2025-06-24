@@ -26,12 +26,12 @@ int delete_boarding(int id) {
     int curr_id;
     int found = 0;
 
-    while (fscanf(file, "%d;%d;%[^;];%d\n", &curr_id, &b.student_id, b.date, &b.boarded) == 4) {
+    while (fscanf(file, "%d;%d;%[^;];%s\n", &curr_id, &b.class_id, b.student_name, b.student_rg) == 4) {
         if (curr_id == id) {
             found = 1;
             continue;
         }
-        fprintf(temp, "%d;%d;%s;%d\n", curr_id, b.student_id, b.date, b.boarded);
+        fprintf(temp, "%d;%d;%s;%s\n", curr_id, b.class_id, b.student_name, b.student_rg);
     }
 
     fclose(file);

@@ -26,12 +26,12 @@ int delete_travel_insurance(int id) {
     int curr_id;
     int found = 0;
 
-    while (fscanf(file, "%d;%d;%[^;];%[^\n]\n", &curr_id, &t.student_id, t.policy_number, t.provider) == 4) {
+    while (fscanf(file, "%d;%d;%[^;];%[^;];%[^;]%s\n", &curr_id, &t.class_id, t.student_name, t.student_rg, t.student_cpf, t.student_bdate) == 6) {
         if (curr_id == id) {
             found = 1;
             continue;
         }
-        fprintf(temp, "%d;%d;%s;%s\n", curr_id, t.student_id, t.policy_number, t.provider);
+        fprintf(temp, "%d;%d;%s;%s;%s;%s\n", curr_id, &t.class_id, t.student_name, t.student_rg, t.student_cpf, t.student_bdate);
     }
 
     fclose(file);

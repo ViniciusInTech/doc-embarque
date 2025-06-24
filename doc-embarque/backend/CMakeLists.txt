@@ -40,14 +40,12 @@ add_executable(doc_embarque
         src/use_cases/update_installment.c
         src/use_cases/delete_installment.c
         src/use_cases/create_boarding.c
-        src/use_cases/read_boarding.c
-        src/use_cases/update_boarding.c
         src/use_cases/delete_boarding.c
         src/use_cases/create_travel_insurance.c
-        src/use_cases/read_travel_insurance.c
-        src/use_cases/update_travel_insurance.c
         src/use_cases/delete_travel_insurance.c
         src/use_cases/read_user.c
+        include/use_cases/count_students.h
+        src/use_cases/count_students.c
 )
 
 set_target_properties(doc_embarque PROPERTIES
