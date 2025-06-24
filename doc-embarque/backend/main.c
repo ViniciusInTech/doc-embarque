@@ -45,6 +45,8 @@
 #include "include/use_cases/create_travel_insurance.h"
 #include "include/use_cases/delete_travel_insurance.h"
 #include "include/use_cases/read_user.h"
+#include "include/use_cases/boarding_spreadsheet.h"
+#include "include/use_cases/travelinsurance_spreadsheet.h"
 
 
 static void print_menu() {
@@ -83,6 +85,7 @@ static void print_menu() {
     printf("34 - Criar seguro viagem\n");
     printf("37 - Remover seguro\n");
     printf("38 - Planilha embarque\n");
+    printf("39 - Planilha seguro viagem\n");
     printf("0 - Sair\n> ");
 }
 
@@ -403,6 +406,14 @@ int main() {
                     printf("Seguro removido.\n");
                 else
                     printf("Seguro não encontrado.\n");
+                break;
+            }
+            case 38: {
+                Boarding b = boarding_spreadsheet();
+                break;
+            }
+            case 39: {
+                TravelInsurance t = travel_insurance_spreadsheet();
                 break;
             }
             case 0:

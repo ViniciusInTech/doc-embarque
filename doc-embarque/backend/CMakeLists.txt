@@ -46,6 +46,10 @@ add_executable(doc_embarque
         src/use_cases/read_user.c
         include/use_cases/count_students.h
         src/use_cases/count_students.c
+        include/use_cases/boarding_spreadsheet.h
+        src/use_cases/boarding_spreadsheet.c
+        include/use_cases/travelinsurance_spreadsheet.h
+        src/use_cases/travelinsurance_spreadsheet.c
 )
 
 set_target_properties(doc_embarque PROPERTIES

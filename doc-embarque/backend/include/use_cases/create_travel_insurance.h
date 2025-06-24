@@ -8,6 +8,5 @@ TravelInsurance create_travel_insurance_cli();
 int get_next_travel_insurance_id();
 TravelInsurance save_travel_insurance(int cols, TravelInsurance t[1][cols]);
 int verify_class_insurance(int id);
-int count_students(int class_id);
 
 #endif
