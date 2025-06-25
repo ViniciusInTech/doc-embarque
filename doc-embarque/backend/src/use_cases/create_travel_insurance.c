@@ -29,7 +29,7 @@ int verify_class_insurance(int id) {
     FILE *file = fopen(CLASS_FILE, "r");
     Class c; int temp; int found = 0;
     if (file != NULL) {
-        while (fscanf(file, "%d;%d;%[^;];%d;%d\n", &temp, &c.school_id, c.name, &c.students, &c.confirmed_students) == 5) {
+        while (fscanf(file, "%d;%d;%[^;];%d\n", &temp, &c.school_id, c.name, &c.students) == 4) {
             if (temp == id) { found = 1; break; }
         }
         fclose(file);
@@ -37,25 +37,25 @@ int verify_class_insurance(int id) {
     return found;
 }
 
-TravelInsurance save_travel_insurance(int cols, TravelInsurance t[1][cols]) {
+TravelInsurance save_travel_insurance(int cols, TravelInsurance t[cols]) {
     ensure_data_directory();
     FILE *file = fopen(FILE_PATH, "a");
     if (!file) {
         perror("Erro ao abrir o arquivo");
-        return t[0][0];
+        return t[0];
     }
     int i;
     for (i = 0; i < cols; i++) {
-        fprintf(file, "%d;%d;%s;%s;%s;%s\n", t[0][i].id, t[0][i].class_id, t[0][i].student_name, t[0][i].student_rg, t[0][i].student_cpf, t[0][i].student_bdate);
+        fprintf(file, "%d;%d;%s;%s;%s;%s\n", t[i].id, t[i].class_id, t[i].student_name, t[i].student_rg, t[i].student_cpf, t[i].student_bdate);
     }
     fclose(file);
-    return t[0][0];
+    return t[0];
 }
 
-TravelInsurance create_travel_insurance(int cols, TravelInsurance t[1][cols]) {
+TravelInsurance create_travel_insurance(int cols, TravelInsurance t[cols]) {
     int i;
     for (i = 0; i < cols; i++) {
-        t[0][i].id = get_next_travel_insurance_id();
+        t[i].id = get_next_travel_insurance_id();
     }
     return save_travel_insurance(cols, t);
 }
@@ -73,10 +73,10 @@ TravelInsurance create_travel_insurance_cli() {
     }
 
     int cs = count_students(class_id);
-    TravelInsurance t1[1][cs];
+    TravelInsurance t1[cs];
     int c;
     for (c = 0; c < cs; c++) {
-        t1[0][c].class_id = class_id;
+        t1[c].class_id = class_id;
     }
 
     FILE *file = fopen(STUDENT_FILE, "r");
@@ -89,10 +89,10 @@ TravelInsurance create_travel_insurance_cli() {
     Student s;
     while (fscanf(file, "%d;%d;%[^;];%[^;];%[^;];%s\n", &s.id, &temp, s.name, s.rg, s.cpf, s.birth_date) == 6) {
         if (temp == class_id) {
-            strcpy(t1[0][i].student_name, s.name);
-            strcpy(t1[0][i].student_rg, s.rg);
-            strcpy(t1[0][i].student_cpf, s.cpf);
-            strcpy(t1[0][i].student_bdate, s.birth_date);
+            strcpy(t1[i].student_name, s.name);
+            strcpy(t1[i].student_rg, s.rg);
+            strcpy(t1[i].student_cpf, s.cpf);
+            strcpy(t1[i].student_bdate, s.birth_date);
             i ++;
         }
     }

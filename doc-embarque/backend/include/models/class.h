@@ -6,7 +6,6 @@ typedef struct {
     int school_id;
     char name[50];
     int students;
-    int confirmed_students;
 
 } Class;
 

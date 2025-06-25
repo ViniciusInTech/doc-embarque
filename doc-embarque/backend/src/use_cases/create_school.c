@@ -9,7 +9,7 @@
 
 int get_next_school_id() {
     FILE *file = fopen(SCHOOLS_FILE_PATH, "r");
-    int id = 0, temp;
+    int id = 1, temp;
     School s;
 
     if (file != NULL) {

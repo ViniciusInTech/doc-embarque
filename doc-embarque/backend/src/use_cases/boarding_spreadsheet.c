@@ -51,8 +51,8 @@ Boarding boarding_spreadsheet() {
     }
 
    int cs = count_students_boarding(id);
-    Boarding b1[1][cs];
-    Boarding b2[1][cs];
+    Boarding b1[cs];
+    Boarding b2[cs];
     int i = 0, j = 0;
 
     FILE *file = fopen(FILE_PATH, "r");
@@ -60,12 +60,12 @@ Boarding boarding_spreadsheet() {
         perror("Erro ao abrir o arquivo\n");
         return b;
     }
-    while (fscanf(file, "%d;%d;%[^;];%s\n", &b1[0][i].id, &b1[0][i].class_id, b1[0][i].student_name, b1[0][i].student_rg) == 4) {
-        if (b1[0][i].id == id) {
-            b2[0][j].id = b1[0][i].id;
-            b2[0][j].class_id = b1[0][i].class_id;
-            strcpy(b2[0][j].student_name, b1[0][i].student_name);
-            strcpy(b2[0][j].student_rg, b1[0][i].student_rg);
+    while (fscanf(file, "%d;%d;%[^;];%s\n", &b1[i].id, &b1[i].class_id, b1[i].student_name, b1[i].student_rg) == 4) {
+        if (b1[i].id == id) {
+            b2[j].id = b1[i].id;
+            b2[j].class_id = b1[i].class_id;
+            strcpy(b2[j].student_name, b1[i].student_name);
+            strcpy(b2[j].student_rg, b1[i].student_rg);
             j++;
         }
         i++;
@@ -80,7 +80,7 @@ Boarding boarding_spreadsheet() {
     fprintf(file2, "NOME; RG; EMBARCOU\n");
     int a;
     for (a = 0; a < cs; a++) {
-        fprintf(file2, "%s;%s\n", b2[0][a].student_name, b2[0][a].student_rg);
+        fprintf(file2, "%s;%s\n", b2[a].student_name, b2[a].student_rg);
     }
     fclose(file2);
     return b;

@@ -181,9 +181,6 @@ int main() {
                 printf("Total de alunos (0 para manter): ");
                 fgets(buffer, sizeof(buffer), stdin);
                 c.students = atoi(buffer);
-                printf("Alunos confirmados (0 para manter): ");
-                fgets(buffer, sizeof(buffer), stdin);
-                c.confirmed_students = atoi(buffer);
                 if (update_class(c))
                     printf("Turma atualizada.\n");
                 else

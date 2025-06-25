@@ -15,10 +15,10 @@ void read_classes() {
         return;
     }
 
-    while (fscanf(file, "%d;%d;%[^;];%d;%d\n", &c.class_id, &c.school_id, c.name,
-                   &c.students, &c.confirmed_students) == 5) {
-        printf("ID da classe: %d | Escola: %d | Nome da classe: %s | Total de alunos: %d | Total de alunos confirmados: %d\n",
-               c.class_id, c.school_id, c.name, c.students, c.confirmed_students);
+    while (fscanf(file, "%d;%d;%[^;];%d\n", &c.class_id, &c.school_id, c.name,
+                   &c.students) == 4) {
+        printf("ID da classe: %d | Escola: %d | Nome da classe: %s | Total de alunos: %d\n",
+               c.class_id, c.school_id, c.name, c.students);
                    }
 
     fclose(file);

@@ -19,8 +19,8 @@ int update_class(Class updated) {
     Class c;
     int found = 0;
 
-    while (fscanf(file, "%d;%d;%[^;];%d;%d\n", &c.class_id, &c.school_id, c.name,
-                   &c.students, &c.confirmed_students) == 5) {
+    while (fscanf(file, "%d;%d;%[^;];%d\n", &c.class_id, &c.school_id, c.name,
+                   &c.students) == 4) {
         Class to_store = c;
         if (c.class_id == updated.class_id) {
             to_store = updated;
@@ -53,8 +53,8 @@ int update_class(Class updated) {
     }
 
     for (size_t i = 0; i < count; ++i) {
-        fprintf(file, "%d;%d;%s;%d;%d\n", classes[i].class_id, classes[i].school_id,
-                classes[i].name, classes[i].students, classes[i].confirmed_students);
+        fprintf(file, "%d;%d;%s;%d\n", classes[i].class_id, classes[i].school_id,
+                classes[i].name, classes[i].students);
     }
     fclose(file);
     free(classes);

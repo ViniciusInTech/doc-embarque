@@ -14,8 +14,8 @@ int get_next_class_id() {
     Class c;
 
     if (file != NULL) {
-        while (fscanf(file, "%d;%d;%[^;];%d;%d\n", &temp, &c.school_id, c.name,
-                      &c.students, &c.confirmed_students) == 5) {
+        while (fscanf(file, "%d;%d;%[^;];%d\n", &temp, &c.school_id, c.name,
+                      &c.students) == 4) {
             if (temp > id) {
                 id = temp;
             }
@@ -33,8 +33,8 @@ int class_exists(int id) {
     int found = 0;
 
     if (file != NULL) {
-        while (fscanf(file, "%d;%d;%[^;];%d;%d\n", &temp, &c.school_id, c.name,
-                      &c.students, &c.confirmed_students) == 5) {
+        while (fscanf(file, "%d;%d;%[^;];%d\n", &temp, &c.school_id, c.name,
+                      &c.students) == 4) {
             if (temp == id) {
                 found = 1;
                 break;
@@ -76,8 +76,8 @@ Class save_class(Class c) {
         return c;
     }
 
-    fprintf(file, "%d;%d;%s;%d;%d\n", c.class_id, c.school_id, c.name,
-            c.students, c.confirmed_students);
+    fprintf(file, "%d;%d;%s;%d\n", c.class_id, c.school_id, c.name,
+            c.students);
     fclose(file);
     return c;
 }
@@ -101,10 +101,6 @@ Class create_class_cli() {
 
     printf("Total de alunos: ");
     scanf("%d", &c.students);
-    getchar();
-
-    printf("Alunos confirmados: ");
-    scanf("%d", &c.confirmed_students);
     getchar();
 
     c = save_class(c);

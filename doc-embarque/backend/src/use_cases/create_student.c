@@ -28,7 +28,7 @@ static int verify_classroom(int id) {
     int temp;
     int found = 0;
     if (file != NULL) {
-        while (fscanf(file, "%d;%d;%[^;];%d;%d\n", &temp, &c.school_id, c.name, &c.students, &c.confirmed_students) == 5) {
+        while (fscanf(file, "%d;%d;%[^;];%d\n", &temp, &c.school_id, c.name, &c.students) == 4) {
             if (temp == id) {
                 found = 1;
                 break;

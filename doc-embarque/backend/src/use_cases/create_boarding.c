@@ -29,7 +29,7 @@ int verify_class_board(int id) {
     FILE *file = fopen(CLASS_FILE, "r");
     Class c; int temp; int found = 0;
     if (file != NULL) {
-        while (fscanf(file, "%d;%d;%[^;];%d;%d\n", &temp, &c.school_id, c.name, &c.students, &c.confirmed_students) == 5) {
+        while (fscanf(file, "%d;%d;%[^;];%d\n", &temp, &c.school_id, c.name, &c.students) == 4) {
             if (temp == id) { found = 1; break; }
         }
         fclose(file);
@@ -37,26 +37,26 @@ int verify_class_board(int id) {
     return found;
 }
 
-Boarding save_boarding(int cols, Boarding b[1][cols]) {
+Boarding save_boarding(int cols, Boarding b[cols]) {
     ensure_data_directory();
     FILE *file = fopen(FILE_PATH, "a");
     if (!file) {
         perror("Erro ao abrir o arquivo");
-        return b[0][0];
+        return b[0];
     }
     int i;
     for (i = 0; i < cols; i++) {
-        fprintf(file, "%d;%d;%s;%s\n", b[0][i].id, b[0][i].class_id, b[0][i].student_name, b[0][i].student_rg);
+        fprintf(file, "%d;%d;%s;%s\n", b[i].id, b[i].class_id, b[i].student_name, b[i].student_rg);
     }
 
     fclose(file);
-    return b[0][0];
+    return b[0];
 }
 
-Boarding create_boarding(int cols, Boarding b[1][cols]) {
+Boarding create_boarding(int cols, Boarding b[cols]) {
     int i;
     for (i = 0; i < cols; i++) {
-        b[0][i].id = get_next_boarding_id();
+        b[i].id = get_next_boarding_id();
     }
     return save_boarding(cols, b);
 }
@@ -74,11 +74,11 @@ Boarding create_boarding_cli() {
         return b;
     }
     int cs = count_students(class_id);
-    Boarding b1[1][cs];
+    Boarding b1[cs];
 
     int c;
     for (c = 0; c < cs; c++) {
-        b1[0][c].class_id = class_id ;
+        b1[c].class_id = class_id ;
     }
 
     FILE *file = fopen(STUDENT_FILE, "r");
@@ -91,8 +91,8 @@ Boarding create_boarding_cli() {
     int i = 0;
     while (fscanf(file, "%d;%d;%[^;];%[^;];%[^;];%s\n", &s.id, &temp, s.name, s.rg, s.cpf, s.birth_date) == 6) {
         if (temp == class_id) {
-            strcpy(b1[0][i].student_name, s.name);
-            strcpy(b1[0][i].student_rg, s.rg);
+            strcpy(b1[i].student_name, s.name);
+            strcpy(b1[i].student_rg, s.rg);
             i++;
         }
     }

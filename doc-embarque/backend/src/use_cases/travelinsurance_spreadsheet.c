@@ -50,8 +50,8 @@ TravelInsurance travel_insurance_spreadsheet() {
     }
 
     int cs = count_students_tv(id);
-    TravelInsurance t1[1][cs];
-    TravelInsurance t2[1][cs];
+    TravelInsurance t1[cs];
+    TravelInsurance t2[cs];
     int i = 0, j = 0;
 
     FILE *file = fopen(FILE_PATH, "r");
@@ -59,14 +59,14 @@ TravelInsurance travel_insurance_spreadsheet() {
         perror("Erro ao abrir o arquivo.\n");
         return t;
     }
-    while(fscanf(file, "%d;%d;%[^;];%[^;];%[^;];%s\n", &t1[0][i], &t1[0][i].class_id, t1[0][i].student_name, t1[0][i].student_rg, t1[0][i].student_cpf, t1[0][i].student_bdate) == 6) {
-        if (t1[0][i].id == id) {
-            t2[0][j].id = t1[0][i].id;
-            t2[0][j].class_id = t1[0][i].class_id;
-            strcpy(t2[0][j].student_name, t1[0][i].student_name);
-            strcpy(t2[0][j].student_rg, t1[0][i].student_rg);
-            strcpy(t2[0][j].student_cpf, t1[0][i].student_cpf);
-            strcpy(t2[0][j].student_bdate, t1[0][i].student_bdate);
+    while(fscanf(file, "%d;%d;%[^;];%[^;];%[^;];%s\n", &t1[i], &t1[i].class_id, t1[i].student_name, t1[i].student_rg, t1[i].student_cpf, t1[i].student_bdate) == 6) {
+        if (t1[i].id == id) {
+            t2[j].id = t1[i].id;
+            t2[j].class_id = t1[i].class_id;
+            strcpy(t2[j].student_name, t1[i].student_name);
+            strcpy(t2[j].student_rg, t1[i].student_rg);
+            strcpy(t2[j].student_cpf, t1[i].student_cpf);
+            strcpy(t2[j].student_bdate, t1[i].student_bdate);
             j++;
         }
         i++;
@@ -81,7 +81,7 @@ TravelInsurance travel_insurance_spreadsheet() {
     fprintf(file2, "NOME; RG; CPF; DATA DE NASCIMENTO\n");
     int a;
     for (a = 0; a < cs; a++) {
-        fprintf(file2, "%s;%s;%s;%s\n", t2[0][a].student_name, t2[0][a].student_rg, t2[0][a].student_cpf, t2[0][a].student_bdate);
+        fprintf(file2, "%s;%s;%s;%s\n", t2[a].student_name, t2[a].student_rg, t2[a].student_cpf, t2[a].student_bdate);
     }
     fclose(file2);
     return t;

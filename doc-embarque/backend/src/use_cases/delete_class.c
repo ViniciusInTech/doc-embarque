@@ -23,8 +23,8 @@ int delete_class(int class_id) {
     size_t count = 0;
     Class c;
 
-    while (fscanf(file, "%d;%d;%[^;];%d;%d\n", &c.class_id, &c.school_id, c.name,
-                   &c.students, &c.confirmed_students) == 5) {
+    while (fscanf(file, "%d;%d;%[^;];%d\n", &c.class_id, &c.school_id, c.name,
+                   &c.students) == 4) {
         if (c.class_id != class_id) {
             Class *tmp = realloc(classes, (count + 1) * sizeof(Class));
             if (!tmp) {
@@ -47,8 +47,8 @@ int delete_class(int class_id) {
     }
 
     for (size_t i = 0; i < count; ++i) {
-        fprintf(file, "%d;%d;%s;%d;%d\n", classes[i].class_id, classes[i].school_id,
-                classes[i].name, classes[i].students, classes[i].confirmed_students);
+        fprintf(file, "%d;%d;%s;%d\n", classes[i].class_id, classes[i].school_id,
+                classes[i].name, classes[i].students);
     }
 
     fclose(file);
