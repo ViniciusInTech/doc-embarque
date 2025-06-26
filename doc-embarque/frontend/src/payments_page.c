@@ -73,6 +73,30 @@ static void on_school_changed(GtkComboBox *combo, gpointer data){
     int id=sid?atoi(sid):-1;
     refresh_class_combo(id);
 }
+static int date_is_overdue(const char *date_str){
+    if(strcmp(date_str,"pago")==0) return 0;
+    struct tm tm={0};
+    if(!strptime(date_str,"%Y-%m-%d",&tm)) return 0;
+    time_t due=mktime(&tm);
+    time_t now=time(NULL);
+    return difftime(now,due)>0;
+}
+
+static void calc_student_balance(int student_id,double *due,double *paid,int *overdue){
+    *due=0.0; *paid=0.0; if(overdue) *overdue=0;
+    Payment *payments=NULL; int pcount=load_payments_by_student(student_id,&payments);
+    for(int p=0;p<pcount;p++){
+        *due+=payments[p].amount;
+        Installment *inst=NULL; int icount=load_installments_by_payment(payments[p].id,&inst);
+        for(int j=0;j<icount;j++){
+            if(inst[j].paid) *paid+=inst[j].amount;
+            else if(overdue && date_is_overdue(inst[j].due_date)) *overdue=1;
+        }
+        free(inst);
+    }
+    free(payments);
+}
+
 static void summary_update_page(SummaryDialog *data) {
     if (!GTK_IS_WIDGET(data->list)) return;
     GList *children = gtk_container_get_children(GTK_CONTAINER(data->list));
@@ -88,8 +112,16 @@ static void summary_update_page(SummaryDialog *data) {
         char idbuf[16]; snprintf(idbuf,sizeof(idbuf),"%d",data->students[i].id);
         gtk_box_pack_start(GTK_BOX(row),gtk_label_new(idbuf),FALSE,FALSE,0);
         gtk_box_pack_start(GTK_BOX(row),gtk_label_new(data->students[i].name),TRUE,TRUE,0);
-        int paid=is_student_paid(data->students[i].id);
-        gtk_box_pack_start(GTK_BOX(row),gtk_label_new(paid?"Pago":"Em aberto"),FALSE,FALSE,0);
+        double due=0.0,paid=0.0; int overdue=0;
+        calc_student_balance(data->students[i].id,&due,&paid,&overdue);
+        char duebuf[32],paidbuf[32];
+        snprintf(duebuf,sizeof(duebuf),"%.2lf",due);
+        snprintf(paidbuf,sizeof(paidbuf),"%.2lf",paid);
+        gtk_box_pack_start(GTK_BOX(row),gtk_label_new(duebuf),FALSE,FALSE,0);
+        gtk_box_pack_start(GTK_BOX(row),gtk_label_new(paidbuf),FALSE,FALSE,0);
+        double debt=due-paid;
+        const char *status=overdue?"ATRASADO":(debt>0.01?"DEVENDO":"OK");
+        gtk_box_pack_start(GTK_BOX(row),gtk_label_new(status),FALSE,FALSE,0);
         GtkWidget *wrap=gtk_list_box_row_new();
         gtk_container_add(GTK_CONTAINER(wrap),row);
         gtk_container_add(GTK_CONTAINER(data->list),wrap);
@@ -114,6 +146,10 @@ static void on_next_summary(GtkButton *btn, gpointer user_data){
     SummaryDialog *d=user_data;
     int total_pages=(d->count + d->items_per_page -1)/d->items_per_page;
     if(d->current_page<total_pages){d->current_page++; summary_update_page(d);}
+}
+
+static void on_summary_dialog_response(GtkDialog *dialog, gint response, gpointer user_data){
+    g_free(user_data);
 }
 
 static void export_summary_pdf(SummaryDialog *data){
@@ -142,9 +178,13 @@ static void export_summary_pdf(SummaryDialog *data){
     cairo_set_font_size(cr,12);
     double y=40;
     for(int i=0;i<data->count;i++){
+        double due=0.0,paid=0.0; int overdue=0;
+        calc_student_balance(data->students[i].id,&due,&paid,&overdue);
+        double debt=due-paid;
+        const char *status=overdue?"ATRASADO":(debt>0.01?"DEVENDO":"OK");
         char line[256];
-        int paid=is_student_paid(data->students[i].id);
-        snprintf(line,sizeof(line),"%d - %s - %s",data->students[i].id,data->students[i].name,paid?"Pago":"Em aberto");
+        snprintf(line,sizeof(line),"%d - %s - Devido: %.2lf Pago: %.2lf - %s",
+                 data->students[i].id,data->students[i].name,due,paid,status);
         cairo_move_to(cr,50,y);
         cairo_show_text(cr,line);
         y+=20;
@@ -218,7 +258,7 @@ static void show_summary_dialog(GtkButton *btn, gpointer user_data){
     g_signal_connect(d->prev_btn,"clicked",G_CALLBACK(on_prev_summary),d);
     g_signal_connect(d->next_btn,"clicked",G_CALLBACK(on_next_summary),d);
     g_signal_connect(export_btn,"clicked",G_CALLBACK(on_export_pdf),d);
-    g_signal_connect(dialog,"response",G_CALLBACK(g_free),d);
+    g_signal_connect(dialog,"response",G_CALLBACK(on_summary_dialog_response),d);
 
     summary_update_page(d);
     gtk_widget_show_all(dialog);
