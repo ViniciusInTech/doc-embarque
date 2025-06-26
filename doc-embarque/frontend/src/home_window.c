@@ -4,6 +4,7 @@
 #include "classes_page.h"
 #include "travels_page.h"
 #include "payments_page.h"
+#include "boarding_page.h"
 #include <gtk/gtk.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
@@ -90,12 +91,14 @@ GtkWidget *build_home_ui(GtkWidget *stack) {
     GtkWidget *classes_page = build_classes_ui();
     GtkWidget *travels_page = build_travels_ui();
     GtkWidget *payments_page = build_payments_ui();
+    GtkWidget *boarding_page = build_boarding_ui();
 
     gtk_stack_add_named(GTK_STACK(content_stack), dashboard_page, "dashboard");
     gtk_stack_add_named(GTK_STACK(content_stack), schools_page, "schools");
     gtk_stack_add_named(GTK_STACK(content_stack), classes_page, "classes");
     gtk_stack_add_named(GTK_STACK(content_stack), travels_page, "travels");
     gtk_stack_add_named(GTK_STACK(content_stack), payments_page, "payments");
+    gtk_stack_add_named(GTK_STACK(content_stack), boarding_page, "boarding");
 
 
     const struct {
@@ -108,10 +111,11 @@ GtkWidget *build_home_ui(GtkWidget *stack) {
         {"Turmas", "assets/classes.svg", "classes"},
         {"Viagens", "assets/travel.svg", "travels"},
         {"Pagamentos", "assets/payment.svg", "payments"},
+        {"Embarque", "assets/boarding.svg", "boarding"},
         {"Sair", "assets/logout.svg", "login"},
     };
 
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 7; i++) {
         GtkWidget *btn = create_menu_button(menu_items[i].label, menu_items[i].icon);
 
         if (g_strcmp0(menu_items[i].label, "Sair") == 0) {

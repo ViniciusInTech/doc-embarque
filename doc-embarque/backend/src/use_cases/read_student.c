@@ -53,3 +53,32 @@ int load_students_by_class(int class_id, Student **students) {
     fclose(file);
     return count;
 }
+int load_students(Student **students) {
+    FILE *file = fopen(STUDENTS_FILE_PATH, "r");
+    if (!file) {
+        return 0;
+    }
+
+    int count = 0;
+    Student tmp;
+    int id;
+
+    while (fscanf(file, "%d;%d;%[^;];%[^;];%[^;];%[^\n]\n",
+                   &id, &tmp.classroom_id,
+                   tmp.name, tmp.rg, tmp.cpf, tmp.birth_date) == 6) {
+        count++;
+                   }
+
+    rewind(file);
+    *students = malloc(sizeof(Student) * count);
+    int idx = 0;
+    while (fscanf(file, "%d;%d;%[^;];%[^;];%[^;];%[^\n]\n",
+                   &id, &tmp.classroom_id,
+                   tmp.name, tmp.rg, tmp.cpf, tmp.birth_date) == 6) {
+        tmp.id = id;
+        (*students)[idx++] = tmp;
+                   }
+
+    fclose(file);
+    return count;
+}

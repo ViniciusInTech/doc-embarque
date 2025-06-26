@@ -44,6 +44,7 @@ add_executable(doc_embarque_frontend
         src/classes_page.c
         src/travels_page.c
         src/payments_page.c
+        src/boarding_page.c
         src/session.c
         ${BACKEND_SOURCES}
 )

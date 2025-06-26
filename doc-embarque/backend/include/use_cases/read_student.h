@@ -5,5 +5,6 @@
 
 void read_students();
 int load_students_by_class(int class_id, Student **students);
+int load_students(Student **students);
 
 #endif
