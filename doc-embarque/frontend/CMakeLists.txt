@@ -5,10 +5,11 @@ set(CMAKE_C_STANDARD 99)
 # Find GTK3
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(GTK3 REQUIRED gtk+-3.0)
+pkg_check_modules(CAIRO REQUIRED cairo)
 
-include_directories(${GTK3_INCLUDE_DIRS} ../backend/include ../backend/include/models ../backend/include/use_cases include)
-link_directories(${GTK3_LIBRARY_DIRS})
-add_definitions(${GTK3_CFLAGS_OTHER})
+include_directories(${GTK3_INCLUDE_DIRS} ${CAIRO_INCLUDE_DIRS} ../backend/include ../backend/include/models ../backend/include/use_cases include)
+link_directories(${GTK3_LIBRARY_DIRS} ${CAIRO_LIBRARY_DIRS})
+add_definitions(${GTK3_CFLAGS_OTHER} ${CAIRO_CFLAGS_OTHER})
 
 set(BACKEND_SOURCES
         ../backend/src/use_cases/create_user.c
@@ -31,6 +32,7 @@ set(BACKEND_SOURCES
         ../backend/src/use_cases/read_installment.c
         ../backend/src/use_cases/create_travel.c
         ../backend/src/use_cases/read_travel.c
+        ../backend/src/use_cases/check_student_payment.c
         ../backend/src/utils.c
 )
 
@@ -49,7 +51,7 @@ add_executable(doc_embarque_frontend
         ${BACKEND_SOURCES}
 )
 
-target_link_libraries(doc_embarque_frontend ${GTK3_LIBRARIES})
+target_link_libraries(doc_embarque_frontend ${GTK3_LIBRARIES} ${CAIRO_LIBRARIES})
 
 set_target_properties(doc_embarque_frontend PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
