@@ -8,11 +8,20 @@
 #include <gtk/gtk.h>
 #include <stdlib.h>
 
+typedef struct {
+    School *school;
+    GtkListBox *list;
+    GtkWidget *name_entry;
+    GtkWidget *addr_entry;
+    GtkWidget *dialog;
+} EditSchoolData;
+
 static GtkWidget *form_box;
 static GtkWidget *list_container;
 static GtkWidget *list_box;
 static GtkWidget *name_entry;
 static GtkWidget *address_entry;
+static GtkWidget *schools_stack;
 
 static void refresh_school_list(GtkListBox *list);
 
@@ -27,19 +36,12 @@ static void show_message(GtkWindow *parent, const char *message) {
     gtk_widget_destroy(dialog);
 }
 
-static void show_form_only(void) {
-    gtk_widget_hide(list_container);
-    gtk_widget_show_all(form_box);
-}
-
-static void show_list_only(void) {
-    refresh_school_list(GTK_LIST_BOX(list_box));
-    gtk_widget_hide(form_box);
-    gtk_widget_show_all(list_container);
-}
-
-static void on_toggle_form(GtkButton *button, gpointer user_data) {
-    show_form_only();
+static void show_school_page(GtkButton *button, gpointer user_data) {
+    const gchar *page_name = (const gchar *)user_data;
+    gtk_stack_set_visible_child_name(GTK_STACK(schools_stack), page_name);
+    if (g_strcmp0(page_name, "list") == 0) {
+        refresh_school_list(GTK_LIST_BOX(list_box));
+    }
 }
 
 static void on_save_school(GtkButton *button, gpointer user_data) {
@@ -70,82 +72,214 @@ static void on_save_school(GtkButton *button, gpointer user_data) {
 
     gtk_entry_set_text(GTK_ENTRY(name_entry), "");
     gtk_entry_set_text(GTK_ENTRY(address_entry), "");
-    gtk_widget_hide(form_box);
+    gtk_stack_set_visible_child_name(GTK_STACK(schools_stack), "list");
+    refresh_school_list(GTK_LIST_BOX(list_box));
 }
-
-
 
 static void on_details_clicked(GtkButton *button, gpointer user_data) {
     School *s = g_object_get_data(G_OBJECT(button), "school");
-    char msg[256];
-    snprintf(msg, sizeof(msg), "ID: %d\nNome: %s\nEndereço: %s", s->id, s->name, s->address);
-    show_message(GTK_WINDOW(gtk_widget_get_toplevel(GTK_WIDGET(button))), msg);
+
+    GtkWidget *dialog = gtk_dialog_new_with_buttons(
+        "Detalhes da Escola",
+        GTK_WINDOW(gtk_widget_get_toplevel(GTK_WIDGET(button))),
+        GTK_DIALOG_MODAL,
+        "Fechar", GTK_RESPONSE_CLOSE,
+        NULL
+    );
+
+    GtkWidget *content = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
+    GtkWidget *box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 16);
+    gtk_widget_set_margin_top(box, 16);
+    gtk_widget_set_margin_bottom(box, 16);
+    gtk_widget_set_margin_start(box, 16);
+    gtk_widget_set_margin_end(box, 16);
+    gtk_container_add(GTK_CONTAINER(content), box);
+
+    GtkWidget *icon = gtk_image_new_from_icon_name("dialog-information", GTK_ICON_SIZE_DIALOG);
+    gtk_widget_set_halign(icon, GTK_ALIGN_CENTER);
+    gtk_box_pack_start(GTK_BOX(box), icon, FALSE, FALSE, 0);
+
+    GtkWidget *name_label = gtk_label_new(NULL);
+    gchar *name_markup = g_strdup_printf("<span size='large' weight='bold'>%s</span>", s->name);
+    gtk_label_set_markup(GTK_LABEL(name_label), name_markup);
+    g_free(name_markup);
+    gtk_widget_set_halign(name_label, GTK_ALIGN_CENTER);
+    gtk_box_pack_start(GTK_BOX(box), name_label, FALSE, FALSE, 0);
+
+    GtkWidget *address_label = gtk_label_new(NULL);
+    gchar *address_markup = g_strdup_printf("<span size='medium'>%s</span>", s->address);
+    gtk_label_set_markup(GTK_LABEL(address_label), address_markup);
+    g_free(address_markup);
+    gtk_widget_set_halign(address_label, GTK_ALIGN_CENTER);
+    gtk_box_pack_start(GTK_BOX(box), address_label, FALSE, FALSE, 0);
+
+    gtk_widget_show_all(dialog);
+    gtk_dialog_run(GTK_DIALOG(dialog));
+    gtk_widget_destroy(dialog);
+}
+
+static void on_save_edit_school(GtkButton *button, gpointer user_data) {
+    EditSchoolData *data = (EditSchoolData *)user_data;
+
+    School upd = {0};
+    upd.id = data->school->id;
+    g_strlcpy(upd.name, gtk_entry_get_text(GTK_ENTRY(data->name_entry)), sizeof(upd.name));
+    g_strlcpy(upd.address, gtk_entry_get_text(GTK_ENTRY(data->addr_entry)), sizeof(upd.address));
+
+    if (update_school(upd)) {
+        show_message(GTK_WINDOW(data->dialog), "Escola atualizada.");
+        refresh_school_list(data->list);
+    } else {
+        show_message(GTK_WINDOW(data->dialog), "Erro ao atualizar.");
+    }
+
+    gtk_widget_destroy(data->dialog);
+    g_free(data);
 }
 
 static void on_edit_clicked(GtkButton *button, gpointer user_data) {
     School *s = g_object_get_data(G_OBJECT(button), "school");
     GtkListBox *list = GTK_LIST_BOX(user_data);
 
-    GtkWidget *dialog = gtk_dialog_new_with_buttons("Editar Escola",
+    GtkWidget *dialog = gtk_dialog_new_with_buttons(
+        "Editar Escola",
         GTK_WINDOW(gtk_widget_get_toplevel(GTK_WIDGET(button))),
         GTK_DIALOG_MODAL,
-        "Cancelar", GTK_RESPONSE_CANCEL,
-        "Salvar", GTK_RESPONSE_OK,
-        NULL);
+        NULL
+    );
 
     GtkWidget *content = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
-    GtkWidget *grid = gtk_grid_new();
-    gtk_grid_set_row_spacing(GTK_GRID(grid), 8);
-    gtk_grid_set_column_spacing(GTK_GRID(grid), 8);
-    gtk_container_add(GTK_CONTAINER(content), grid);
+    GtkWidget *box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 16);
+    gtk_widget_set_margin_top(box, 24);
+    gtk_widget_set_margin_bottom(box, 24);
+    gtk_widget_set_margin_start(box, 24);
+    gtk_widget_set_margin_end(box, 24);
+    gtk_container_add(GTK_CONTAINER(content), box);
 
+    GtkWidget *title_label = gtk_label_new(NULL);
+    gchar *markup = g_strdup_printf("<span size='x-large' weight='bold'>Editar Escola</span>");
+    gtk_label_set_markup(GTK_LABEL(title_label), markup);
+    g_free(markup);
+    gtk_widget_set_halign(title_label, GTK_ALIGN_CENTER);
+    gtk_box_pack_start(GTK_BOX(box), title_label, FALSE, FALSE, 0);
+
+    GtkWidget *form = gtk_grid_new();
+    gtk_grid_set_row_spacing(GTK_GRID(form), 12);
+    gtk_grid_set_column_spacing(GTK_GRID(form), 12);
+    gtk_box_pack_start(GTK_BOX(box), form, FALSE, FALSE, 0);
+
+    GtkWidget *name_label = gtk_label_new("Nome:");
+    gtk_widget_set_halign(name_label, GTK_ALIGN_END);
     GtkWidget *name_entry_d = gtk_entry_new();
     gtk_entry_set_text(GTK_ENTRY(name_entry_d), s->name);
+    gtk_entry_set_width_chars(GTK_ENTRY(name_entry_d), 30);
+
+    GtkWidget *addr_label = gtk_label_new("Endereço:");
+    gtk_widget_set_halign(addr_label, GTK_ALIGN_END);
     GtkWidget *addr_entry_d = gtk_entry_new();
     gtk_entry_set_text(GTK_ENTRY(addr_entry_d), s->address);
+    gtk_entry_set_width_chars(GTK_ENTRY(addr_entry_d), 30);
 
-    gtk_grid_attach(GTK_GRID(grid), gtk_label_new("Nome:"), 0, 0, 1, 1);
-    gtk_grid_attach(GTK_GRID(grid), name_entry_d, 1, 0, 1, 1);
-    gtk_grid_attach(GTK_GRID(grid), gtk_label_new("Endereço:"), 0, 1, 1, 1);
-    gtk_grid_attach(GTK_GRID(grid), addr_entry_d, 1, 1, 1, 1);
+    gtk_grid_attach(GTK_GRID(form), name_label, 0, 0, 1, 1);
+    gtk_grid_attach(GTK_GRID(form), name_entry_d, 1, 0, 1, 1);
+    gtk_grid_attach(GTK_GRID(form), addr_label, 0, 1, 1, 1);
+    gtk_grid_attach(GTK_GRID(form), addr_entry_d, 1, 1, 1, 1);
+
+    GtkWidget *btn_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 16);
+    gtk_widget_set_halign(btn_box, GTK_ALIGN_CENTER);
+    gtk_box_pack_start(GTK_BOX(box), btn_box, FALSE, FALSE, 0);
+
+    GtkWidget *cancel_btn = gtk_button_new_with_label("❌ Cancelar");
+    GtkWidget *save_btn = gtk_button_new_with_label("💾 Salvar");
+
+    gtk_box_pack_start(GTK_BOX(btn_box), cancel_btn, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(btn_box), save_btn, FALSE, FALSE, 0);
+
+    g_signal_connect_swapped(cancel_btn, "clicked", G_CALLBACK(gtk_widget_destroy), dialog);
+
+    EditSchoolData *data = g_malloc(sizeof(EditSchoolData));
+    data->school = s;
+    data->list = list;
+    data->name_entry = name_entry_d;
+    data->addr_entry = addr_entry_d;
+    data->dialog = dialog;
+
+    g_signal_connect(save_btn, "clicked", G_CALLBACK(on_save_edit_school), data);
 
     gtk_widget_show_all(dialog);
-    if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_OK) {
-        School upd = {0};
-        upd.id = s->id;
-        g_strlcpy(upd.name, gtk_entry_get_text(GTK_ENTRY(name_entry_d)), sizeof(upd.name));
-        g_strlcpy(upd.address, gtk_entry_get_text(GTK_ENTRY(addr_entry_d)), sizeof(upd.address));
-        if (update_school(upd)) {
-            show_message(GTK_WINDOW(dialog), "Escola atualizada.");
-            refresh_school_list(list);
-        } else {
-            show_message(GTK_WINDOW(dialog), "Erro ao atualizar.");
-        }
+}
+
+typedef struct {
+    GtkWidget *dialog;
+    GtkListBox *list;
+    School *school;
+} DeleteSchoolData;
+
+static void on_confirm_delete(GtkButton *button, gpointer user_data) {
+    DeleteSchoolData *data = (DeleteSchoolData *)user_data;
+
+    if (delete_school(data->school->id)) {
+        refresh_school_list(data->list);
+        show_message(GTK_WINDOW(data->dialog), "Escola removida.");
+    } else {
+        show_message(GTK_WINDOW(data->dialog), "Escola não encontrada.");
     }
-    gtk_widget_destroy(dialog);
+
+    gtk_widget_destroy(data->dialog);
+    g_free(data);
 }
 
 static void on_delete_clicked(GtkButton *button, gpointer user_data) {
     School *s = g_object_get_data(G_OBJECT(button), "school");
     GtkListBox *list = GTK_LIST_BOX(user_data);
 
+    GtkWidget *dialog = gtk_dialog_new_with_buttons(
+        "Remover Escola",
+        GTK_WINDOW(gtk_widget_get_toplevel(GTK_WIDGET(button))),
+        GTK_DIALOG_MODAL,
+        NULL
+    );
+
+    GtkWidget *content = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
+    GtkWidget *box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 16);
+    gtk_widget_set_margin_top(box, 24);
+    gtk_widget_set_margin_bottom(box, 24);
+    gtk_widget_set_margin_start(box, 24);
+    gtk_widget_set_margin_end(box, 24);
+    gtk_container_add(GTK_CONTAINER(content), box);
+
+    GtkWidget *icon = gtk_image_new_from_icon_name("dialog-question", GTK_ICON_SIZE_DIALOG);
+    gtk_widget_set_halign(icon, GTK_ALIGN_CENTER);
+    gtk_box_pack_start(GTK_BOX(box), icon, FALSE, FALSE, 0);
+
     char question[128];
     snprintf(question, sizeof(question), "Remover escola '%s'?", s->name);
-    GtkWidget *confirm = gtk_message_dialog_new(GTK_WINDOW(gtk_widget_get_toplevel(GTK_WIDGET(button))),
-                                               GTK_DIALOG_MODAL,
-                                               GTK_MESSAGE_QUESTION,
-                                               GTK_BUTTONS_YES_NO,
-                                               "%s", question);
-    if (gtk_dialog_run(GTK_DIALOG(confirm)) == GTK_RESPONSE_YES) {
-        if (delete_school(s->id)) {
-            show_message(GTK_WINDOW(confirm), "Escola removida.");
-            refresh_school_list(list);
-        } else {
-            show_message(GTK_WINDOW(confirm), "Escola não encontrada.");
-        }
-    }
-    gtk_widget_destroy(confirm);
+    GtkWidget *question_label = gtk_label_new(question);
+    gtk_widget_set_halign(question_label, GTK_ALIGN_CENTER);
+    gtk_box_pack_start(GTK_BOX(box), question_label, FALSE, FALSE, 0);
+
+    GtkWidget *btn_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 16);
+    gtk_widget_set_halign(btn_box, GTK_ALIGN_CENTER);
+    gtk_box_pack_start(GTK_BOX(box), btn_box, FALSE, FALSE, 0);
+
+    GtkWidget *cancel_btn = gtk_button_new_with_label("❌ Cancelar");
+    GtkWidget *confirm_btn = gtk_button_new_with_label("🗑️ Confirmar");
+
+    gtk_box_pack_start(GTK_BOX(btn_box), cancel_btn, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(btn_box), confirm_btn, FALSE, FALSE, 0);
+
+    g_signal_connect_swapped(cancel_btn, "clicked", G_CALLBACK(gtk_widget_destroy), dialog);
+
+    DeleteSchoolData *data = g_malloc(sizeof(DeleteSchoolData));
+    data->dialog = dialog;
+    data->list = list;
+    data->school = s;
+
+    g_signal_connect(confirm_btn, "clicked", G_CALLBACK(on_confirm_delete), data);
+
+    gtk_widget_show_all(dialog);
 }
+
 
 static void refresh_school_list(GtkListBox *list) {
     GList *children = gtk_container_get_children(GTK_CONTAINER(list));
@@ -189,22 +323,11 @@ static void refresh_school_list(GtkListBox *list) {
     gtk_widget_show_all(GTK_WIDGET(list));
 }
 
-static void on_list_schools(GtkButton *button, gpointer user_data) {
-    (void)button;
-    show_list_only();
-}
 GtkWidget *build_schools_ui() {
     GtkWidget *box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 
-    gtk_widget_set_margin_top(box, 0);
-    gtk_widget_set_margin_bottom(box, 0);
-    gtk_widget_set_margin_start(box, 0);
-    gtk_widget_set_margin_end(box, 0);
-
     GtkWidget *card = gtk_box_new(GTK_ORIENTATION_VERTICAL, 12);
     gtk_widget_set_name(card, "action-card");
-    gtk_widget_set_margin_top(card, 0);
-    gtk_widget_set_margin_bottom(card, 0);
     gtk_widget_set_margin_start(card, 16);
     gtk_widget_set_margin_end(card, 16);
     gtk_widget_set_halign(card, GTK_ALIGN_FILL);
@@ -214,38 +337,20 @@ GtkWidget *build_schools_ui() {
     gtk_widget_set_margin_top(actions, 16);
     gtk_widget_set_halign(actions, GTK_ALIGN_START);
 
-    const char *labels[] = {
-        "📘  Cadastrar nova escola",
-        "📋  Listar escolas cadastradas"
-    };
+    GtkWidget *register_btn = gtk_button_new_with_label("📘  Cadastrar nova escola");
+    GtkWidget *list_btn = gtk_button_new_with_label("📋  Listar escolas cadastradas");
 
-    GtkWidget *buttons[2];
-    for (int i = 0; i < 2; i++) {
-        GtkWidget *label = gtk_label_new(labels[i]);
+    g_signal_connect(register_btn, "clicked", G_CALLBACK(show_school_page), "form");
+    g_signal_connect(list_btn, "clicked", G_CALLBACK(show_school_page), "list");
 
-        GtkWidget *btn_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 8);
-        gtk_box_pack_start(GTK_BOX(btn_box), label, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(actions), register_btn, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(actions), list_btn, FALSE, FALSE, 0);
 
-        GtkWidget *btn = gtk_button_new();
-        gtk_container_add(GTK_CONTAINER(btn), btn_box);
-        gtk_widget_set_name(btn, "action-button");
-
-        gtk_box_pack_start(GTK_BOX(actions), btn, FALSE, FALSE, 0);
-        buttons[i] = btn;
-    }
-    g_signal_connect(buttons[0], "clicked", G_CALLBACK(on_toggle_form), NULL);
-    g_signal_connect(buttons[1], "clicked", G_CALLBACK(on_list_schools), NULL);
-
-    form_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 8);
-    gtk_widget_set_margin_top(form_box, 16);
-    gtk_widget_set_margin_bottom(form_box, 0);
-    gtk_widget_set_margin_start(form_box, 16);
-    gtk_widget_set_margin_end(form_box, 16);
+    schools_stack = gtk_stack_new();
 
     GtkWidget *form_grid = gtk_grid_new();
     gtk_grid_set_row_spacing(GTK_GRID(form_grid), 8);
     gtk_grid_set_column_spacing(GTK_GRID(form_grid), 8);
-    gtk_box_pack_start(GTK_BOX(form_box), form_grid, FALSE, FALSE, 0);
 
     GtkWidget *name_label = gtk_label_new("Nome da escola:");
     name_entry = gtk_entry_new();
@@ -264,30 +369,23 @@ GtkWidget *build_schools_ui() {
     gtk_grid_attach(GTK_GRID(form_grid), save_btn, 0, 1, 4, 1);
     g_signal_connect(save_btn, "clicked", G_CALLBACK(on_save_school), NULL);
 
-    gtk_widget_hide(form_box);
+    GtkWidget *form_container = gtk_box_new(GTK_ORIENTATION_VERTICAL, 16);
+    gtk_box_pack_start(GTK_BOX(form_container), form_grid, FALSE, FALSE, 0);
 
     list_container = gtk_scrolled_window_new(NULL, NULL);
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(list_container), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-    gtk_widget_set_margin_top(list_container, 16);
-    gtk_widget_set_margin_bottom(list_container, 0);
-    gtk_widget_set_margin_start(list_container, 16);
-    gtk_widget_set_margin_end(list_container, 16);
-
     list_box = gtk_list_box_new();
     gtk_container_add(GTK_CONTAINER(list_container), list_box);
-    gtk_widget_set_size_request(list_container, -1, 200);
-    gtk_widget_hide(list_container);
+
+    gtk_stack_add_titled(GTK_STACK(schools_stack), list_container, "list", "Listagem");
+    gtk_stack_add_titled(GTK_STACK(schools_stack), form_container, "form", "Cadastro");
 
     gtk_box_pack_start(GTK_BOX(card), actions, FALSE, FALSE, 0);
-    gtk_box_pack_start(GTK_BOX(card), form_box, FALSE, FALSE, 0);
-    gtk_box_pack_start(GTK_BOX(card), list_container, TRUE, TRUE, 0);
+    gtk_box_pack_start(GTK_BOX(card), schools_stack, TRUE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(box), card, FALSE, FALSE, 0);
 
-    GtkWidget *label = gtk_label_new("Selecione uma ação para gerenciar escolas.");
-    gtk_widget_set_halign(label, GTK_ALIGN_START);
-    gtk_widget_set_margin_top(label, 20);
-    gtk_widget_set_margin_start(label, 16);
-    gtk_box_pack_start(GTK_BOX(box), label, TRUE, TRUE, 0);
+    gtk_stack_set_visible_child_name(GTK_STACK(schools_stack), "list");
+    refresh_school_list(GTK_LIST_BOX(list_box));
 
     return box;
 }
