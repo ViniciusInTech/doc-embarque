@@ -16,6 +16,7 @@
 #include <gtk/gtk.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 static GtkWidget *school_combo;
 static GtkWidget *class_combo;
@@ -32,6 +33,8 @@ typedef struct {
     int count;
     int current_page;
     int items_per_page;
+    int class_id;
+    char class_name[50];
 } SummaryDialog;
 
 static void summary_update_page(SummaryDialog *data);
@@ -114,7 +117,26 @@ static void on_next_summary(GtkButton *btn, gpointer user_data){
 }
 
 static void export_summary_pdf(SummaryDialog *data){
-    cairo_surface_t *surface=cairo_pdf_surface_create("summary.pdf",595,842);
+    GtkFileChooserNative *chooser = gtk_file_chooser_native_new("Salvar resumo de pagamentos",
+                                                               GTK_WINDOW(data->dialog),
+                                                               GTK_FILE_CHOOSER_ACTION_SAVE,
+                                                               "Salvar",
+                                                               "Cancelar");
+    char defname[256];
+    time_t now = time(NULL);
+    struct tm *tm_info = localtime(&now);
+    char datebuf[64];
+    strftime(datebuf, sizeof(datebuf), "%Y-%m-%d", tm_info);
+    snprintf(defname, sizeof(defname), "%s_%s.pdf", data->class_name, datebuf);
+    gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(chooser), defname);
+    if (gtk_native_dialog_run(GTK_NATIVE_DIALOG(chooser)) != GTK_RESPONSE_ACCEPT) {
+        g_object_unref(chooser);
+        return;
+    }
+    char *filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(chooser));
+    g_object_unref(chooser);
+
+    cairo_surface_t *surface=cairo_pdf_surface_create(filename,595,842);
     cairo_t *cr=cairo_create(surface);
     cairo_select_font_face(cr,"Sans",CAIRO_FONT_SLANT_NORMAL,CAIRO_FONT_WEIGHT_NORMAL);
     cairo_set_font_size(cr,12);
@@ -133,6 +155,16 @@ static void export_summary_pdf(SummaryDialog *data){
     }
     cairo_destroy(cr);
     cairo_surface_destroy(surface);
+
+    GtkWidget *msg = gtk_message_dialog_new(GTK_WINDOW(data->dialog),
+                                            GTK_DIALOG_MODAL,
+                                            GTK_MESSAGE_INFO,
+                                            GTK_BUTTONS_OK,
+                                            "PDF salvo em %s",
+                                            filename);
+    gtk_dialog_run(GTK_DIALOG(msg));
+    gtk_widget_destroy(msg);
+    g_free(filename);
 }
 
 static void on_export_pdf(GtkButton *btn, gpointer user_data){
@@ -146,6 +178,16 @@ static void show_summary_dialog(GtkButton *btn, gpointer user_data){
     SummaryDialog *d=g_malloc0(sizeof(SummaryDialog));
     d->items_per_page=10; d->current_page=1;
     d->count=load_students_by_class(class_id,&d->students);
+    d->class_id=class_id;
+    Class *classes=NULL; int ccount=load_classes(&classes);
+    for(int i=0;i<ccount;i++){
+        if(classes[i].class_id==class_id){
+            g_strlcpy(d->class_name,classes[i].name,sizeof(d->class_name));
+            break;
+        }
+    }
+    free(classes);
+
 
     GtkWidget *dialog=gtk_dialog_new_with_buttons("Resumo da turma",
             GTK_WINDOW(gtk_widget_get_toplevel(GTK_WIDGET(btn))),

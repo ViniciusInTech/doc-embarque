@@ -137,8 +137,10 @@ static void generate_pdf(GtkButton *btn, gpointer data) {
     cairo_show_text(cr, "RG");
     cairo_move_to(cr, 360, y);
     cairo_show_text(cr, "Situacao");
-    cairo_move_to(cr, 460, y);
-    cairo_show_text(cr, "Embarcou");
+    cairo_move_to(cr, 450, y);
+    cairo_show_text(cr, "Sim");
+    cairo_move_to(cr, 500, y);
+    cairo_show_text(cr, "Nao");
     y += 20;
     for (int i = 0; i < count; i++) {
         double due = 0.0, paid = 0.0;
