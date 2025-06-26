@@ -14,9 +14,10 @@ int get_next_installment_id() {
     int id = 0, temp;
     Installment i;
     if (file != NULL) {
-        while (fscanf(file, "%d;%d;%lf;%[^;];%d\n", &temp, &i.payment_id, &i.amount, i.due_date, &i.paid) == 5) {
+        while (fscanf(file, "%d;%d;%lf;%[^;];%[^;];%[^;];%d\n", &temp, &i.payment_id,
+                       &i.amount, i.due_date, i.proof, i.method, &i.paid) == 7) {
             if (temp > id) id = temp;
-        }
+                       }
         fclose(file);
     }
     return id + 1;
@@ -41,7 +42,8 @@ Installment save_installment(Installment i) {
         perror("Erro ao abrir o arquivo");
         return i;
     }
-    fprintf(file, "%d;%d;%.2lf;%s;%d\n", i.id, i.payment_id, i.amount, i.due_date, i.paid);
+    fprintf(file, "%d;%d;%.2lf;%s;%s;%s;%d\n",
+            i.id, i.payment_id, i.amount, i.due_date, i.proof, i.method, i.paid);
     fclose(file);
     return i;
 }
@@ -67,6 +69,12 @@ Installment create_installment_cli() {
     printf("Vencimento: ");
     fgets(i.due_date, sizeof(i.due_date), stdin);
     strtok(i.due_date, "\n");
+    printf("Comprovante: ");
+    fgets(i.proof, sizeof(i.proof), stdin);
+    strtok(i.proof, "\n");
+    printf("Metodo: ");
+    fgets(i.method, sizeof(i.method), stdin);
+    strtok(i.method, "\n");
     i.paid = 0;
     i = create_installment(i);
     if (i.id != -1) printf("Parcela salva com sucesso.\n");

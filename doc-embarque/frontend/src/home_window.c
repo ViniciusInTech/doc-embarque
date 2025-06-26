@@ -3,6 +3,7 @@
 #include "schools_page.h"
 #include "classes_page.h"
 #include "travels_page.h"
+#include "payments_page.h"
 #include <gtk/gtk.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
@@ -88,11 +89,13 @@ GtkWidget *build_home_ui(GtkWidget *stack) {
     GtkWidget *schools_page = build_schools_ui();
     GtkWidget *classes_page = build_classes_ui();
     GtkWidget *travels_page = build_travels_ui();
+    GtkWidget *payments_page = build_payments_ui();
 
     gtk_stack_add_named(GTK_STACK(content_stack), dashboard_page, "dashboard");
     gtk_stack_add_named(GTK_STACK(content_stack), schools_page, "schools");
     gtk_stack_add_named(GTK_STACK(content_stack), classes_page, "classes");
     gtk_stack_add_named(GTK_STACK(content_stack), travels_page, "travels");
+    gtk_stack_add_named(GTK_STACK(content_stack), payments_page, "payments");
 
 
     const struct {
@@ -104,6 +107,7 @@ GtkWidget *build_home_ui(GtkWidget *stack) {
         {"Escolas", "assets/home.svg", "schools"},
         {"Turmas", "assets/classes.svg", "classes"},
         {"Viagens", "assets/travel.svg", "travels"},
+        {"Pagamentos", "assets/payment.svg", "payments"},
         {"Sair", "assets/logout.svg", "login"},
     };
 

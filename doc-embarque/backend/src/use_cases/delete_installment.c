@@ -26,13 +26,17 @@ int delete_installment(int id) {
     int curr_id;
     int found = 0;
 
-    while (fscanf(file, "%d;%d;%lf;%[^;];%d\n", &curr_id, &i.payment_id, &i.amount, i.due_date, &i.paid) == 5) {
+    while (fscanf(file, "%d;%d;%lf;%[^;];%[^;];%[^;];%d\n",
+                  &curr_id, &i.payment_id, &i.amount,
+                  i.due_date, i.proof, i.method, &i.paid) == 7) {
         if (curr_id == id) {
             found = 1;
             continue;
         }
-        fprintf(temp, "%d;%d;%.2lf;%s;%d\n", curr_id, i.payment_id, i.amount, i.due_date, i.paid);
-    }
+        fprintf(temp, "%d;%d;%.2lf;%s;%s;%s;%d\n",
+                curr_id, i.payment_id, i.amount,
+                i.due_date, i.proof, i.method, i.paid);
+                  }
 
     fclose(file);
     fclose(temp);
