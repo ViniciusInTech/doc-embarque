@@ -1,6 +1,6 @@
-# 🧠 Backend - Projeto Lumaster Turismo
+# 🧠 Backend - DocEmbarque
 
-Este diretório contém a implementação do backend da aplicação **Lumaster Turismo**, responsável por gerenciar os dados da excursão escolar, incluindo cadastro de alunos, pagamentos, embarque e seguro viagem.
+Este diretório contém a implementação do backend da aplicação **DocEmbarque**, responsável por gerenciar cadastros de alunos, escolas e viagens. Ele também controla pagamentos, embarque e seguro viagem.
 
 ## 📁 Estrutura de Pastas
 
@@ -50,6 +50,11 @@ Ele simula a persistência de dados em arquivos `.txt` e disponibiliza diversos 
 - `create_class_cli` para cadastro de turmas.
 - `create_student_cli` para inserir alunos em uma turma.
 
+### Requisitos
+
+- GCC e `make`
+- `cmake`
+
 ### Compilação
 
 ```bash
@@ -61,4 +66,4 @@ cmake .. && make
 Após o processo o executável ficará disponível em `build/bin/doc_embarque`.
 ## 🚧 Em Desenvolvimento
 
-Este backend será integrado à interface gráfica desenvolvida separadamente na pasta `frontend/`.
+Este backend será integrado à interface gráfica desenvolvida separadamente na pasta `frontend/`

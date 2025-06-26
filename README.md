@@ -1,6 +1,17 @@
 # 📄 DocEmbarque
 
-**DocEmbarque** é um sistema de gerenciamento de excursões escolares, desenvolvido para centralizar o controle de cadastros de alunos, documentos obrigatórios e geração de planilhas de embarque e seguro viagem. O sistema busca garantir segurança, rastreabilidade e organização no processo de embarque de estudantes.
+**DocEmbarque** é um sistema de gerenciamento de excursões escolares. A aplicação foi escrita em **C** e se divide em dois módulos:
+
+- **backend/**: concentra as regras de negócio e grava os dados em arquivos `.txt`;
+- **frontend/**: interface gráfica feita em **GTK** que consome diretamente as funções do backend.
+
+O objetivo é centralizar o cadastro de alunos, documentos e pagamentos, além de gerar planilhas de embarque e de seguro viagem.
+
+## 📂 Estrutura do Repositório
+
+- `doc-embarque/backend/`  – código fonte do backend
+- `doc-embarque/frontend/` – código do frontend em GTK
+- `doc-embarque.drawio`    – diagrama das entidades
 
 ---
 
@@ -32,8 +43,10 @@
 
 ## 🛠️ Tecnologias Utilizadas
 
-- [OpenPyXL / xlsxwriter] para geração de planilhas Excel (se aplicável)
-- Git + GitHub para versionamento e colaboração
+- **C & CMake** para o desenvolvimento do backend e do frontend;
+- **GTK 3** para a interface gráfica;
+- **OpenPyXL / xlsxwriter** (Python) para geração de planilhas Excel (em versões anteriores);
+- Git + GitHub para versionamento e colaboração.
 
 ---
 
@@ -42,4 +55,20 @@
 ```bash
 git clone git@github.com:ViniciusInTech/doc-embarque.git
 cd doc-embarque
+```
+
+### Compilando o backend
+
+```bash
+cd doc-embarque/backend
+mkdir build && cd build
+cmake .. && make
+```
+
+### Compilando o frontend
+
+```bash
+cd ../../frontend
+mkdir build && cd build
+cmake .. && make
 ```

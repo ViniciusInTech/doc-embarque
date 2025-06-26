@@ -1,8 +1,9 @@
 # 🌐 Frontend
 
 Esta pasta contém a interface gráfica em GTK para o projeto **DocEmbarque**.
-O frontend está organizado em módulos pequenos para cada tela/dialogo.
-Atualmente há uma janela de login e um diálogo de cadastro de usuários que
+O frontend está organizado em módulos pequenos para cada tela/diálogo.
+Atualmente há telas de **login**, **cadastro de usuário** e uma janela principal
+com páginas para escolas, turmas, viagens, pagamentos e embarque. Todas elas
 consomem diretamente as funções do backend.
 
 ## Compilação
