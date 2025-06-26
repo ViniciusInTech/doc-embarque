@@ -17,4 +17,7 @@
 
 #define CLASS_FILE_PATH "../../data/class.txt"
 
+#define TRAVELS_FILE_PATH "../../data/travels.txt"
+
+
 #endif

@@ -2,6 +2,7 @@
 #include "dashboard_page.h"
 #include "schools_page.h"
 #include "classes_page.h"
+#include "travels_page.h"
 #include <gtk/gtk.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
@@ -86,10 +87,13 @@ GtkWidget *build_home_ui(GtkWidget *stack) {
     GtkWidget *dashboard_page = build_dashboard_ui();
     GtkWidget *schools_page = build_schools_ui();
     GtkWidget *classes_page = build_classes_ui();
+    GtkWidget *travels_page = build_travels_ui();
 
     gtk_stack_add_named(GTK_STACK(content_stack), dashboard_page, "dashboard");
     gtk_stack_add_named(GTK_STACK(content_stack), schools_page, "schools");
     gtk_stack_add_named(GTK_STACK(content_stack), classes_page, "classes");
+    gtk_stack_add_named(GTK_STACK(content_stack), travels_page, "travels");
+
 
     const struct {
         const char *label;
@@ -99,10 +103,11 @@ GtkWidget *build_home_ui(GtkWidget *stack) {
         {"Dashboard", "assets/dashboard.svg", "dashboard"},
         {"Escolas", "assets/home.svg", "schools"},
         {"Turmas", "assets/classes.svg", "classes"},
+        {"Viagens", "assets/travel.svg", "travels"},
         {"Sair", "assets/logout.svg", "login"},
     };
 
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 5; i++) {
         GtkWidget *btn = create_menu_button(menu_items[i].label, menu_items[i].icon);
 
         if (g_strcmp0(menu_items[i].label, "Sair") == 0) {

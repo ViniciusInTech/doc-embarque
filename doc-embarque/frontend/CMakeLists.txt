@@ -25,6 +25,9 @@ set(BACKEND_SOURCES
         ../backend/src/use_cases/read_student.c
         ../backend/src/use_cases/update_student.c
         ../backend/src/use_cases/delete_student.c
+        ../backend/src/use_cases/create_payment.c
+        ../backend/src/use_cases/create_travel.c
+        ../backend/src/use_cases/read_travel.c
         ../backend/src/utils.c
 )
 
@@ -36,6 +39,7 @@ add_executable(doc_embarque_frontend
         src/dashboard_page.c
         src/schools_page.c
         src/classes_page.c
+        src/travels_page.c
         src/session.c
         ${BACKEND_SOURCES}
 )

@@ -43,7 +43,9 @@ add_executable(doc_embarque
         src/use_cases/read_boarding.c
         src/use_cases/update_boarding.c
         src/use_cases/delete_boarding.c
+        src/use_cases/create_travel.c
         src/use_cases/create_travel_insurance.c
+        src/use_cases/read_travel.c
         src/use_cases/read_travel_insurance.c
         src/use_cases/update_travel_insurance.c
         src/use_cases/delete_travel_insurance.c
