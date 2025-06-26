@@ -343,8 +343,8 @@ GtkWidget *build_schools_ui() {
     g_signal_connect(register_btn, "clicked", G_CALLBACK(show_school_page), "form");
     g_signal_connect(list_btn, "clicked", G_CALLBACK(show_school_page), "list");
 
-    gtk_box_pack_start(GTK_BOX(actions), register_btn, FALSE, FALSE, 0);
     gtk_box_pack_start(GTK_BOX(actions), list_btn, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(actions), register_btn, FALSE, FALSE, 0);
 
     schools_stack = gtk_stack_new();
 
