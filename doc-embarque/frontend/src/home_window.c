@@ -1,6 +1,7 @@
 #include "home_window.h"
 #include "dashboard_page.h"
 #include "schools_page.h"
+#include "classes_page.h"
 #include <gtk/gtk.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
@@ -84,9 +85,11 @@ GtkWidget *build_home_ui(GtkWidget *stack) {
 
     GtkWidget *dashboard_page = build_dashboard_ui();
     GtkWidget *schools_page = build_schools_ui();
+    GtkWidget *classes_page = build_classes_ui();
 
     gtk_stack_add_named(GTK_STACK(content_stack), dashboard_page, "dashboard");
     gtk_stack_add_named(GTK_STACK(content_stack), schools_page, "schools");
+    gtk_stack_add_named(GTK_STACK(content_stack), classes_page, "classes");
 
     const struct {
         const char *label;
@@ -95,10 +98,11 @@ GtkWidget *build_home_ui(GtkWidget *stack) {
     } menu_items[] = {
         {"Dashboard", "assets/dashboard.svg", "dashboard"},
         {"Escolas", "assets/home.svg", "schools"},
+        {"Turmas", "assets/classes.svg", "classes"},
         {"Sair", "assets/logout.svg", "login"},
     };
 
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 4; i++) {
         GtkWidget *btn = create_menu_button(menu_items[i].label, menu_items[i].icon);
 
         if (g_strcmp0(menu_items[i].label, "Sair") == 0) {

@@ -4,5 +4,6 @@
 #include "../models/class.h"
 
 void read_classes();
+int load_classes(Class **classes);
 
 #endif

@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "../../include/models/class.h"
 #include "../../include/use_cases/read_class.h"
@@ -22,4 +23,32 @@ void read_classes() {
                    }
 
     fclose(file);
+}
+
+int load_classes(Class **classes) {
+    FILE *file = fopen(CLASS_FILE_PATH, "r");
+    if (!file) {
+        return 0;
+    }
+
+    int count = 0;
+    Class tmp;
+    int id;
+
+    while (fscanf(file, "%d;%d;%[^;];%d;%d\n", &id, &tmp.school_id, tmp.name,
+                   &tmp.students, &tmp.confirmed_students) == 5) {
+        count++;
+                   }
+
+    rewind(file);
+    *classes = malloc(sizeof(Class) * count);
+    int idx = 0;
+    while (fscanf(file, "%d;%d;%[^;];%d;%d\n", &id, &tmp.school_id, tmp.name,
+                   &tmp.students, &tmp.confirmed_students) == 5) {
+        tmp.class_id = id;
+        (*classes)[idx++] = tmp;
+                   }
+
+    fclose(file);
+    return count;
 }

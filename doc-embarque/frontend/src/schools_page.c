@@ -281,7 +281,29 @@ static void on_delete_clicked(GtkButton *button, gpointer user_data) {
 }
 
 
+static int current_page = 1;
+static int items_per_page = 10;
+static GtkWidget *prev_button;
+static GtkWidget *next_button;
+static GtkWidget *page_label;
+
+static void refresh_school_list(GtkListBox *list);
+
+static void update_pagination_controls(int total_items) {
+    int total_pages = (total_items + items_per_page - 1) / items_per_page;
+    char page_text[32];
+    snprintf(page_text, sizeof(page_text), "Página %d de %d", current_page, total_pages);
+    gtk_label_set_text(GTK_LABEL(page_label), page_text);
+
+    gtk_widget_set_sensitive(prev_button, current_page > 1);
+    gtk_widget_set_sensitive(next_button, current_page < total_pages);
+}
+
 static void refresh_school_list(GtkListBox *list) {
+    if (!GTK_IS_WIDGET(list)) {
+        return;
+    }
+
     GList *children = gtk_container_get_children(GTK_CONTAINER(list));
     for (GList *c = children; c != NULL; c = c->next) {
         gtk_widget_destroy(GTK_WIDGET(c->data));
@@ -289,9 +311,18 @@ static void refresh_school_list(GtkListBox *list) {
     g_list_free(children);
 
     School *schools = NULL;
-    int count = load_schools(&schools);
-    for (int i = 0; i < count; i++) {
+    int total_count = load_schools(&schools);
+
+    int start_index = (current_page - 1) * items_per_page;
+    int end_index = start_index + items_per_page;
+    if (end_index > total_count) {
+        end_index = total_count;
+    }
+
+    for (int i = start_index; i < end_index; i++) {
+        GtkWidget *row_wrap = gtk_list_box_row_new();
         GtkWidget *row = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 8);
+
         char idbuf[16];
         snprintf(idbuf, sizeof(idbuf), "%d", schools[i].id);
         gtk_box_pack_start(GTK_BOX(row), gtk_label_new(idbuf), FALSE, FALSE, 0);
@@ -315,14 +346,35 @@ static void refresh_school_list(GtkListBox *list) {
         gtk_box_pack_start(GTK_BOX(row), edit_btn, FALSE, FALSE, 0);
         gtk_box_pack_start(GTK_BOX(row), del_btn, FALSE, FALSE, 0);
 
-        GtkWidget *row_wrap = gtk_list_box_row_new();
         gtk_container_add(GTK_CONTAINER(row_wrap), row);
         gtk_container_add(GTK_CONTAINER(list), row_wrap);
     }
+
     free(schools);
     gtk_widget_show_all(GTK_WIDGET(list));
+    update_pagination_controls(total_count);
 }
 
+
+
+static void on_prev_page(GtkButton *button, gpointer user_data) {
+    if (current_page > 1) {
+        current_page--;
+        refresh_school_list(GTK_LIST_BOX(list_box));
+    }
+}
+
+static void on_next_page(GtkButton *button, gpointer user_data) {
+    School *schools = NULL;
+    int total_count = load_schools(&schools);
+    free(schools);
+
+    int total_pages = (total_count + items_per_page - 1) / items_per_page;
+    if (current_page < total_pages) {
+        current_page++;
+        refresh_school_list(GTK_LIST_BOX(list_box));
+    }
+}
 GtkWidget *build_schools_ui() {
     GtkWidget *box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 
@@ -374,18 +426,47 @@ GtkWidget *build_schools_ui() {
 
     list_container = gtk_scrolled_window_new(NULL, NULL);
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(list_container), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+    gtk_widget_set_vexpand(list_container, TRUE);
+    gtk_widget_set_hexpand(list_container, TRUE);
+    gtk_widget_set_size_request(list_container, -1, 430);
+
     list_box = gtk_list_box_new();
+    gtk_widget_set_vexpand(list_box, TRUE);
+    gtk_widget_set_hexpand(list_box, TRUE);
     gtk_container_add(GTK_CONTAINER(list_container), list_box);
 
-    gtk_stack_add_titled(GTK_STACK(schools_stack), list_container, "list", "Listagem");
+    GtkWidget *pagination_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 16);
+    gtk_widget_set_margin_top(pagination_box, 8);
+    gtk_widget_set_halign(pagination_box, GTK_ALIGN_CENTER);
+
+    prev_button = gtk_button_new_with_label("⬅️ Anterior");
+    next_button = gtk_button_new_with_label("Próxima ➡️");
+    page_label = gtk_label_new("");
+
+    gtk_box_pack_start(GTK_BOX(pagination_box), prev_button, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(pagination_box), page_label, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(pagination_box), next_button, FALSE, FALSE, 0);
+
+    g_signal_connect(prev_button, "clicked", G_CALLBACK(on_prev_page), NULL);
+    g_signal_connect(next_button, "clicked", G_CALLBACK(on_next_page), NULL);
+
+    GtkWidget *list_page = gtk_box_new(GTK_ORIENTATION_VERTICAL, 8);
+    gtk_widget_set_vexpand(list_page, TRUE);
+    gtk_widget_set_hexpand(list_page, TRUE);
+
+    gtk_box_pack_start(GTK_BOX(list_page), list_container, TRUE, TRUE, 0);
+    gtk_box_pack_start(GTK_BOX(list_page), pagination_box, FALSE, FALSE, 0);
+
+    gtk_stack_add_titled(GTK_STACK(schools_stack), list_page, "list", "Listagem");
     gtk_stack_add_titled(GTK_STACK(schools_stack), form_container, "form", "Cadastro");
 
     gtk_box_pack_start(GTK_BOX(card), actions, FALSE, FALSE, 0);
     gtk_box_pack_start(GTK_BOX(card), schools_stack, TRUE, TRUE, 0);
-    gtk_box_pack_start(GTK_BOX(box), card, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(box), card, TRUE, TRUE, 0);
 
     gtk_stack_set_visible_child_name(GTK_STACK(schools_stack), "list");
     refresh_school_list(GTK_LIST_BOX(list_box));
 
     return box;
 }
+

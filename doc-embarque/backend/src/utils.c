@@ -1,7 +1,6 @@
 #include "../include/utils.h"
 
 #include "paths.h"
-#include "../include/paths.h"
 
 #ifdef _WIN32
 #include <direct.h>
